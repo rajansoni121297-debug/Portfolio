@@ -19,6 +19,7 @@ import { Mentorship } from "@/components/Mentorship/Mentorship";
 import { Credentials } from "@/components/Credentials/Credentials";
 import { Contact } from "@/components/Contact/Contact";
 import { EasterEgg } from "@/components/EasterEgg/EasterEgg";
+import { ChatBot } from "@/components/ChatBot/ChatBot";
 
 export default function Home() {
   // Scroll reveal observer
@@ -102,6 +103,7 @@ export default function Home() {
         </main>
 
         <EasterEgg />
+        <ChatBot />
       </ThemeProvider>
     </ToastProvider>
   );
