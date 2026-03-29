@@ -20,6 +20,7 @@ import { Credentials } from "@/components/Credentials/Credentials";
 import { Contact } from "@/components/Contact/Contact";
 import { EasterEgg } from "@/components/EasterEgg/EasterEgg";
 import { ChatBot } from "@/components/ChatBot/ChatBot";
+import { ScrollProgress } from "@/components/ScrollProgress/ScrollProgress";
 
 export default function Home() {
   // Scroll reveal observer
@@ -81,6 +82,7 @@ export default function Home() {
   return (
     <ToastProvider>
       <ThemeProvider>
+        <ScrollProgress />
         <IntroOverlay />
         <CustomCursor />
         <Particles />
