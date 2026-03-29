@@ -6,7 +6,7 @@ const CHARS = "!<>-_\\/[]{}—=+*^?#_ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export function TextScramble() {
   useEffect(() => {
-    const titles = document.querySelectorAll<HTMLElement>(".stitle, .ptitle, .skills-band-title, .ctitle, .mentor-card-title");
+    const titles = document.querySelectorAll<HTMLElement>(".stitle, .skills-band-title, .mentor-card-title");
 
     titles.forEach((el) => {
       // Store original innerHTML (preserves <em> tags and gold color)
