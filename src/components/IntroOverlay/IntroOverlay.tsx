@@ -5,16 +5,16 @@ import { useEffect, useRef, useState, useCallback } from "react";
 type IntroState = "entry" | "response" | "loading" | "done";
 
 const LOAD_MSGS = [
-  "Warming up pixels…",
+  "Warming up pixels\u2026",
   "Aligning grids perfectly (as always)",
-  "Good design takes a second… or 3",
-  "Loading creativity…",
-  "Calibrating design taste…",
-  "Loading 5 yrs 9 mos of experience…",
+  "Good design takes a second\u2026 or 3",
+  "Loading creativity\u2026",
+  "Calibrating design taste\u2026",
+  "Loading 5 yrs 9 mos of experience\u2026",
   "Almost there, promise!",
-  "Made with love & caffeine ☕",
+  "Made with love & caffeine \u2615",
   "Good UX is invisible when done right",
-  "Designing your first impression…",
+  "Designing your first impression\u2026",
 ];
 
 const WAVE_THRESHOLD = 42;
@@ -23,23 +23,28 @@ const MOTION_DECAY = 0.86;
 export function IntroOverlay() {
   const [state, setState] = useState<IntroState>("entry");
   const [motionPct, setMotionPct] = useState(0);
-  const [camStatus, setCamStatus] = useState("// requesting camera…");
+  const [camStatus, setCamStatus] = useState("// requesting camera\u2026");
   const [progress, setProgress] = useState(0);
   const [loadMsg, setLoadMsg] = useState(LOAD_MSGS[0]);
   const [exiting, setExiting] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [alreadyVisited, setAlreadyVisited] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const rafRef = useRef<number>(0);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const prevDataRef = useRef<Uint8ClampedArray | null>(null);
   const motionAccumRef = useRef(0);
+  const detectedRef = useRef(false); // Prevent double-trigger
+  const analyseCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const analyseCtxRef = useRef<CanvasRenderingContext2D | null>(null);
 
   const stopCamera = useCallback(() => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
+    }
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((t) => t.stop());
       streamRef.current = null;
@@ -83,10 +88,26 @@ export function IntroOverlay() {
     requestAnimationFrame(tick);
   }, []);
 
+  // Wave detected handler
+  const onWaveDetected = useCallback(() => {
+    if (detectedRef.current) return;
+    detectedRef.current = true;
+    stopCamera();
+    setState("response");
+    setTimeout(() => startLoading(), 1600);
+  }, [stopCamera, startLoading]);
+
+  // Frame analysis loop
   const analyseFrame = useCallback(() => {
     const video = videoRef.current;
-    const ctx = ctxRef.current;
-    if (!video || !ctx) return;
+    const ctx = analyseCtxRef.current;
+    if (!video || !ctx || detectedRef.current) return;
+
+    // Make sure video is actually playing
+    if (video.readyState < 2) {
+      rafRef.current = requestAnimationFrame(analyseFrame);
+      return;
+    }
 
     ctx.drawImage(video, 0, 0, 40, 30);
     const data = ctx.getImageData(0, 0, 40, 30).data;
@@ -109,63 +130,75 @@ export function IntroOverlay() {
       setMotionPct(Math.round(motionAccumRef.current));
 
       if (motionAccumRef.current >= WAVE_THRESHOLD) {
-        stopCamera();
-        setState("response");
-        setTimeout(startLoading, 1600);
+        onWaveDetected();
         return;
       }
     }
 
     prevDataRef.current = new Uint8ClampedArray(data);
     rafRef.current = requestAnimationFrame(analyseFrame);
-  }, [stopCamera, startLoading]);
+  }, [onWaveDetected]);
 
-  const startCamera = useCallback(() => {
-    navigator.mediaDevices
-      .getUserMedia({
-        video: { facingMode: "user", width: 320, height: 240 },
-      })
-      .then((s) => {
-        streamRef.current = s;
-        if (videoRef.current) {
-          videoRef.current.srcObject = s;
-          videoRef.current.addEventListener(
-            "loadeddata",
-            () => {
-              setCamStatus("// wave your hand! 👋");
-              rafRef.current = requestAnimationFrame(analyseFrame);
-            },
-            { once: true }
-          );
-        }
-      })
-      .catch(() => {
-        setCamStatus("// camera blocked — use skip ↗");
-      });
-  }, [analyseFrame]);
-
+  // Start camera
   useEffect(() => {
-    if (localStorage.getItem("rdd_portfolio_visited")) {
+    // Check localStorage on mount
+    if (typeof window !== "undefined" && localStorage.getItem("rdd_portfolio_visited")) {
       setAlreadyVisited(true);
       return;
     }
 
-    canvasRef.current = document.createElement("canvas");
-    canvasRef.current.width = 40;
-    canvasRef.current.height = 30;
-    ctxRef.current = canvasRef.current.getContext("2d", {
-      willReadFrequently: true,
-    });
+    // Create analysis canvas
+    const canvas = document.createElement("canvas");
+    canvas.width = 40;
+    canvas.height = 30;
+    analyseCanvasRef.current = canvas;
+    analyseCtxRef.current = canvas.getContext("2d", { willReadFrequently: true });
 
-    const timer = setTimeout(startCamera, 500);
+    const timer = setTimeout(() => {
+      navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: "user", width: 320, height: 240 } })
+        .then((stream) => {
+          streamRef.current = stream;
+          const video = videoRef.current;
+          if (!video) return;
+
+          video.srcObject = stream;
+
+          // Wait for video to be truly ready
+          const onCanPlay = () => {
+            video.play().then(() => {
+              setVideoReady(true);
+              setCamStatus("// wave your hand! \ud83d\udc4b");
+              // Start analysis after a short delay to let camera stabilize
+              setTimeout(() => {
+                rafRef.current = requestAnimationFrame(analyseFrame);
+              }, 300);
+            }).catch(() => {
+              setCamStatus("// camera error \u2014 use skip \u2197");
+            });
+          };
+
+          if (video.readyState >= 3) {
+            onCanPlay();
+          } else {
+            video.addEventListener("canplay", onCanPlay, { once: true });
+          }
+        })
+        .catch(() => {
+          setCamStatus("// camera blocked \u2014 use skip \u2197");
+        });
+    }, 500);
+
     return () => {
       clearTimeout(timer);
       stopCamera();
     };
-  }, [startCamera, stopCamera]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSkip = () => {
     stopCamera();
+    setState("loading");
     startLoading();
   };
 
@@ -185,19 +218,28 @@ export function IntroOverlay() {
         >
           <div className="i-tag">first visit experience</div>
           <h1 className="i-headline">
-            Hey there 👋
+            Hey there \ud83d\udc4b
             <br />
             Try <em>waving your hand</em> to say hi
           </h1>
           <p className="i-sub">
             Your camera will detect the gesture &mdash; or use the skip button
-            ↗
+            &nearr;
           </p>
           <div className="i-cam-outer">
             <div className="i-cam-ring">
-              <video ref={videoRef} id="intro-video" autoPlay muted playsInline />
+              <video
+                ref={videoRef}
+                id="intro-video"
+                autoPlay
+                muted
+                playsInline
+                className={videoReady ? "on" : ""}
+              />
             </div>
-            <div className="i-cam-status" id="i-cam-status">{camStatus}</div>
+            <div className="i-cam-status" id="i-cam-status">
+              {camStatus}
+            </div>
             <div className="i-motion-wrap">
               <div
                 className="i-motion-fill"
@@ -213,7 +255,7 @@ export function IntroOverlay() {
           className={`i-state${state === "response" ? " active" : ""}`}
           id="i-response"
         >
-          <span className="i-wave-emoji">🖐🏻</span>
+          <span className="i-wave-emoji">\ud83d\udd90\ud83c\udffb</span>
           <h2 className="i-resp-title">
             Hey! Nice to
             <br />
@@ -229,7 +271,9 @@ export function IntroOverlay() {
         >
           <div className="i-load-tag">// loading portfolio</div>
           <div className="i-pct-wrap">
-            <span className="i-pct" id="i-pct">{progress}</span>
+            <span className="i-pct" id="i-pct">
+              {progress}
+            </span>
             <span className="i-pct-sym">%</span>
           </div>
           <div className="i-bar-track">
@@ -239,13 +283,15 @@ export function IntroOverlay() {
               style={{ width: `${progress}%` }}
             />
           </div>
-          <div className="i-load-msg" id="i-load-msg">{loadMsg}</div>
+          <div className="i-load-msg" id="i-load-msg">
+            {loadMsg}
+          </div>
         </div>
       </div>
 
       {state === "entry" && !hidden && (
         <button id="intro-skip" onClick={handleSkip}>
-          No camera? Tap here instead 😄
+          No camera? Tap here instead \ud83d\ude04
         </button>
       )}
     </>
