@@ -22,7 +22,6 @@ export function Projects() {
       const card = (e.target as HTMLElement).closest(".pcard") as HTMLElement;
       if (
         !card ||
-        card.classList.contains("pcard-wide") ||
         card.classList.contains("pcard-behance")
       )
         return;

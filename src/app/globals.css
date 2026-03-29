@@ -977,7 +977,7 @@ section{padding:120px 60px}
 .pcard:hover{box-shadow:0 30px 80px var(--shadow-lg),0 0 0 1px var(--gold-line)}
 .pcard::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);transform:scaleX(0);transform-origin:left;transition:transform .4s}
 .pcard:hover::after{transform:scaleX(1)}
-.pcard-wide{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;transform:none!important}
+.pcard-wide{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
 .pcard-tall{grid-row:span 2}
 .pcard-accent{background:linear-gradient(135deg,var(--bg3) 0%,rgba(200,153,58,.06) 100%)}
 /* Tall card visual filler */
