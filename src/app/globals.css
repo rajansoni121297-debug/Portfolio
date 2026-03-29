@@ -2067,6 +2067,27 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:32px 60px
 }
 
 /* ══════════════════════════════════════
+   MICRO-ANIMATIONS
+══════════════════════════════════════ */
+
+/* Letter reveal characters */
+.lr-char{
+  display:inline-block;
+  will-change:transform,opacity;
+}
+
+/* Toast bounce enhancement */
+.toast.show{
+  transform:translateX(0);
+  animation:toastBounce .5s cubic-bezier(.23,1,.32,1);
+}
+@keyframes toastBounce{
+  0%{transform:translateX(120%)}
+  70%{transform:translateX(-6px)}
+  100%{transform:translateX(0)}
+}
+
+/* ══════════════════════════════════════
    SCROLL PROGRESS BAR
 ══════════════════════════════════════ */
 .scroll-progress-track{
@@ -2167,8 +2188,9 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:32px 60px
 }
 .cform-input::placeholder{color:var(--text-dim)}
 .cform-input:focus{
-  border-color:var(--gold-line);
-  box-shadow:0 0 0 3px rgba(200,153,58,.08);
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(200,153,58,.1), 0 0 20px rgba(200,153,58,.06);
+  background:rgba(200,153,58,.02);
 }
 
 .cform-select{

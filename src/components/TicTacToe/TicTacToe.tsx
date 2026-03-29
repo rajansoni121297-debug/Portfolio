@@ -133,6 +133,7 @@ export function TicTacToe() {
   const countdownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const youScoreRef = useRef<HTMLSpanElement>(null);
   const aiScoreRef = useRef<HTMLSpanElement>(null);
+  const confettiCanvasRef = useRef<HTMLCanvasElement>(null);
 
   // Keep board state in ref for async AI callbacks
   const boardStateRef = useRef(board);
@@ -207,6 +208,63 @@ export function TicTacToe() {
       ref.current.classList.add("bump");
       setTimeout(() => ref.current?.classList.remove("bump"), 400);
     }
+  }, []);
+
+  const burstConfetti = useCallback(() => {
+    const canvas = confettiCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const colors = ["#C8993A", "#E8B84B", "rgba(240,237,230,0.8)", "#A0751E"];
+    const count = 40 + Math.floor(Math.random() * 21); // 40-60
+    const particles = Array.from({ length: count }, () => ({
+      x: 150 + (Math.random() - 0.5) * 40,
+      y: 150 + (Math.random() - 0.5) * 40,
+      vx: (Math.random() - 0.5) * 8,
+      vy: -2 - Math.random() * 6,
+      gravity: 0.15,
+      rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() - 0.5) * 0.2,
+      size: 4 + Math.random() * 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      life: 0,
+    }));
+
+    let frame = 0;
+    const maxFrames = 60;
+
+    const animate = () => {
+      frame++;
+      ctx.clearRect(0, 0, 300, 300);
+
+      if (frame > maxFrames) {
+        ctx.clearRect(0, 0, 300, 300);
+        return;
+      }
+
+      const alpha = 1 - frame / maxFrames;
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.vy += p.gravity;
+        p.y += p.vy;
+        p.rotation += p.rotationSpeed;
+        p.life++;
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+      }
+
+      requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
   }, []);
 
   const endGame = useCallback(
@@ -299,13 +357,14 @@ export function TicTacToe() {
         } else {
           setScores((s) => ({ ...s, you: s.you + 1 }));
           bumpScore(youScoreRef);
+          burstConfetti();
           endGame("You win! Rematch in\u2026", "win", res.combo || null);
         }
         return;
       }
       aiMove(newBoard);
     },
-    [board, gameOver, aiThinking, endGame, aiMove, bumpScore]
+    [board, gameOver, aiThinking, endGame, aiMove, bumpScore, burstConfetti]
   );
 
   // Cursor labels for cells, reset button, diff buttons
@@ -403,6 +462,20 @@ export function TicTacToe() {
 
       {/* Scene */}
       <div className="ttt-scene">
+        <canvas
+          ref={confettiCanvasRef}
+          width={300}
+          height={300}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: 300,
+            height: 300,
+            pointerEvents: "none",
+            zIndex: 20,
+          }}
+        />
         <div
           className="ttt-board-3d"
           id="ttt-board-3d"
