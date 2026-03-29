@@ -2,53 +2,104 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 
-/* ── SlotDisplay ─────────────────────────────────────────────── */
+/* ── SlotDisplay — Original digit-level slot machine ─────────── */
 class SlotDisplay {
-  private el: HTMLElement;
-  private digits: HTMLSpanElement[] = [];
+  container: HTMLElement;
+  value: number;
+  cols: { type: string; col?: HTMLElement; track?: HTMLElement; el?: HTMLElement }[];
+  h: number;
 
-  constructor(el: HTMLElement) {
-    this.el = el;
-    this.el.style.display = "inline-flex";
-    this.el.style.overflow = "hidden";
+  constructor(container: HTMLElement, value: number) {
+    this.container = container;
+    this.value = Math.floor(value);
+    this.cols = [];
+    this.h = 0;
+    this._build(this._fmt(this.value));
   }
 
-  setValue(val: string | number, animate = true) {
-    const str = String(val);
-    // reconcile digit spans
-    while (this.digits.length < str.length) {
-      const span = document.createElement("span");
-      span.style.display = "inline-block";
-      span.style.transition = animate ? "transform 0.45s cubic-bezier(.23,1,.32,1)" : "none";
-      span.style.minWidth = "0.58em";
-      span.style.textAlign = "center";
-      this.el.appendChild(span);
-      this.digits.push(span);
-    }
-    while (this.digits.length > str.length) {
-      const removed = this.digits.pop();
-      removed?.remove();
-    }
-    for (let i = 0; i < str.length; i++) {
-      const ch = str[i];
-      const span = this.digits[i];
-      if (span.textContent !== ch) {
-        if (animate && /\d/.test(ch)) {
-          span.style.transform = "translateY(-100%)";
-          span.style.opacity = "0";
-          requestAnimationFrame(() => {
-            span.textContent = ch;
-            requestAnimationFrame(() => {
-              span.style.transition =
-                "transform 0.45s cubic-bezier(.23,1,.32,1), opacity 0.3s ease";
-              span.style.transform = "translateY(0)";
-              span.style.opacity = "1";
-            });
-          });
-        } else {
-          span.textContent = ch;
-        }
+  _fmt(n: number) {
+    return Math.floor(n).toLocaleString("en-US");
+  }
+
+  _build(str: string) {
+    this.container.innerHTML = "";
+    this.cols = [];
+    for (const ch of str) {
+      if (/\d/.test(ch)) {
+        const col = document.createElement("span");
+        col.className = "slot-col";
+        const track = document.createElement("span");
+        track.className = "slot-track";
+        const digit = document.createElement("span");
+        digit.className = "slot-digit";
+        digit.textContent = ch;
+        track.appendChild(digit);
+        col.appendChild(track);
+        this.container.appendChild(col);
+        this.cols.push({ type: "digit", col, track });
+      } else {
+        const sep = document.createElement("span");
+        sep.className = "slot-sep";
+        sep.textContent = ch;
+        this.container.appendChild(sep);
+        this.cols.push({ type: "sep", el: sep });
       }
+    }
+    requestAnimationFrame(() => {
+      const dEl = this.container.querySelector(".slot-digit") as HTMLElement;
+      if (!dEl) return;
+      this.h = dEl.offsetHeight || dEl.getBoundingClientRect().height || 72;
+      this.cols
+        .filter((c) => c.type === "digit")
+        .forEach((c) => {
+          c.col!.style.height = this.h + "px";
+          c.col!.style.lineHeight = this.h + "px";
+        });
+    });
+  }
+
+  update(newValue: number) {
+    const oldStr = this._fmt(this.value);
+    const newStr = this._fmt(Math.floor(newValue));
+    this.value = Math.floor(newValue);
+
+    if (oldStr.length !== newStr.length) {
+      this._build(newStr);
+      return;
+    }
+
+    const h = this.h || 72;
+    let delay = 0;
+
+    for (let i = 0; i < newStr.length; i++) {
+      if (newStr[i] === oldStr[i]) continue;
+      const col = this.cols[i];
+      if (!col || col.type !== "digit") continue;
+      const { track } = col;
+      if (!track) continue;
+
+      const next = document.createElement("span");
+      next.className = "slot-digit";
+      next.textContent = newStr[i];
+      next.style.cssText = `display:block;flex-shrink:0;height:${h}px;line-height:${h}px;`;
+      track.appendChild(next);
+
+      const localDelay = delay;
+      setTimeout(() => {
+        track.style.transition = "none";
+        track.style.transform = "translateY(0)";
+        void track.offsetHeight;
+        track.style.transition = `transform 480ms cubic-bezier(.4,0,.15,1)`;
+        track.style.transform = `translateY(-${h}px)`;
+        setTimeout(() => {
+          const old = track.querySelector(".slot-digit");
+          if (old) track.removeChild(old);
+          track.style.transition = "none";
+          track.style.transform = "translateY(0)";
+        }, 510);
+      }, localDelay);
+
+      delay += 55;
     }
   }
 }
@@ -92,7 +143,7 @@ export function NumbersBand() {
   const handleApprClick = useCallback(() => {
     setApprValue((prev) => {
       const next = prev + 1;
-      apprSlotRef.current?.setValue(next.toLocaleString());
+      apprSlotRef.current?.update(next);
       return next;
     });
     // bump animation
@@ -146,15 +197,19 @@ export function NumbersBand() {
         ) * 2;
         setCoffeeValue(coffeeBase);
         if (coffeeRef.current) {
-          coffeeSlotRef.current = new SlotDisplay(coffeeRef.current);
+          coffeeSlotRef.current = new SlotDisplay(coffeeRef.current, 0);
           // Count up
           const cofDur = 1400;
           const cofStart = performance.now();
+          let lastCoffeeVal = 0;
           function animCoffee(now: number) {
             const p = Math.min((now - cofStart) / cofDur, 1);
             const eased = 1 - Math.pow(1 - p, 3);
             const val = Math.round(eased * coffeeBase);
-            coffeeSlotRef.current?.setValue(val.toLocaleString(), p > 0.05);
+            if (val !== lastCoffeeVal) {
+              coffeeSlotRef.current?.update(val);
+              lastCoffeeVal = val;
+            }
             if (p < 1) requestAnimationFrame(animCoffee);
           }
           requestAnimationFrame(animCoffee);
@@ -163,7 +218,7 @@ export function NumbersBand() {
           const coffeeInterval = setInterval(() => {
             setCoffeeValue((prev) => {
               const next = prev + 1;
-              coffeeSlotRef.current?.setValue(next.toLocaleString());
+              coffeeSlotRef.current?.update(next);
               return next;
             });
           }, 15 * 60 * 1000);
@@ -175,15 +230,19 @@ export function NumbersBand() {
         const apprBase = 23664 + Math.floor(Math.random() * 200);
         setApprValue(apprBase);
         if (apprRef.current) {
-          apprSlotRef.current = new SlotDisplay(apprRef.current);
+          apprSlotRef.current = new SlotDisplay(apprRef.current, 0);
           // Count up
           const apprDur = 1400;
-          const apprStart = performance.now();
+          const apprStartTime = performance.now();
+          let lastApprVal = 0;
           function animAppr(now: number) {
-            const p = Math.min((now - apprStart) / apprDur, 1);
+            const p = Math.min((now - apprStartTime) / apprDur, 1);
             const eased = 1 - Math.pow(1 - p, 3);
             const val = Math.round(eased * apprBase);
-            apprSlotRef.current?.setValue(val.toLocaleString(), p > 0.05);
+            if (val !== lastApprVal) {
+              apprSlotRef.current?.update(val);
+              lastApprVal = val;
+            }
             if (p < 1) requestAnimationFrame(animAppr);
           }
           requestAnimationFrame(animAppr);
@@ -194,7 +253,7 @@ export function NumbersBand() {
             const tid = setTimeout(() => {
               setApprValue((prev) => {
                 const next = prev + 1;
-                apprSlotRef.current?.setValue(next.toLocaleString());
+                apprSlotRef.current?.update(next);
                 return next;
               });
               scheduleAutoIncrement();
