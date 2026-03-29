@@ -9,7 +9,9 @@ export function TextScramble() {
     const titles = document.querySelectorAll<HTMLElement>(".stitle, .ptitle, .skills-band-title, .ctitle, .mentor-card-title");
 
     titles.forEach((el) => {
-      const original = el.textContent || "";
+      // Store original innerHTML (preserves <em> tags and gold color)
+      const originalHTML = el.innerHTML;
+      const originalText = el.textContent || "";
       let isAnimating = false;
       let rafId: number;
 
@@ -17,19 +19,18 @@ export function TextScramble() {
         if (isAnimating) return;
         isAnimating = true;
 
-        const len = original.length;
+        const len = originalText.length;
         let frame = 0;
         const totalFrames = 12;
 
         function tick() {
           let output = "";
           for (let i = 0; i < len; i++) {
-            const char = original[i];
+            const char = originalText[i];
             if (char === " " || char === "\n") {
               output += char;
               continue;
             }
-            // Characters resolve from left to right
             const resolveAt = Math.floor((i / len) * totalFrames);
             if (frame >= resolveAt) {
               output += char;
@@ -43,7 +44,8 @@ export function TextScramble() {
           if (frame <= totalFrames) {
             rafId = requestAnimationFrame(tick);
           } else {
-            el.textContent = original;
+            // Restore original HTML with <em> tags intact
+            el.innerHTML = originalHTML;
             isAnimating = false;
           }
         }
@@ -53,7 +55,8 @@ export function TextScramble() {
 
       el.addEventListener("mouseleave", () => {
         cancelAnimationFrame(rafId);
-        el.textContent = original;
+        // Always restore original HTML (not textContent)
+        el.innerHTML = originalHTML;
         isAnimating = false;
       });
     });

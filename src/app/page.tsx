@@ -25,8 +25,6 @@ import { TextScramble } from "@/components/MicroAnimations/TextScramble";
 import { CardGlow } from "@/components/MicroAnimations/CardGlow";
 import { LetterReveal } from "@/components/MicroAnimations/LetterReveal";
 import { LineDrawReveal } from "@/components/MicroAnimations/LineDrawReveal";
-import { CursorTrail } from "@/components/Cursor/CursorTrail";
-
 export default function Home() {
   // Scroll reveal observer
   useEffect(() => {
@@ -90,7 +88,6 @@ export default function Home() {
         <ScrollProgress />
         <IntroOverlay />
         <CustomCursor />
-        <CursorTrail />
         <Particles />
         <Nav />
 
