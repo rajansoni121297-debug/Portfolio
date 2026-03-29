@@ -141,7 +141,15 @@ export function IntroOverlay() {
 
   // Start camera
   useEffect(() => {
-    // Check localStorage on mount
+    // ?intro=reset in URL clears the visited flag (for testing)
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("intro") === "reset") {
+        localStorage.removeItem("rdd_portfolio_visited");
+      }
+    }
+
+    // Skip intro if already visited
     if (typeof window !== "undefined" && localStorage.getItem("rdd_portfolio_visited")) {
       setAlreadyVisited(true);
       return;
