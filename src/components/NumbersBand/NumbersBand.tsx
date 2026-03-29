@@ -74,8 +74,8 @@ function calcExperience() {
 /* ── Component ───────────────────────────────────────────────── */
 export function NumbersBand() {
   const bandRef = useRef<HTMLDivElement>(null);
-  const coffeeRef = useRef<HTMLSpanElement>(null);
-  const apprRef = useRef<HTMLSpanElement>(null);
+  const coffeeRef = useRef<HTMLDivElement>(null);
+  const apprRef = useRef<HTMLDivElement>(null);
   const projRef = useRef<HTMLSpanElement>(null);
   const initRef = useRef(false);
 
@@ -225,39 +225,39 @@ export function NumbersBand() {
   return (
     <div className="numbers-band reveal" ref={bandRef}>
       <div className="numbers-band-item">
-        <span className="exp-num">{expStr}</span>
-        <div className="nb-label">Experience</div>
-        <div className="nb-sub">
-          <span className="live-micro-dot"></span>
-          <span className="exp-days">+{days}d and counting</span>
-        </div>
+        <div className="nb-num" id="exp-num">{expStr}</div>
+        <div className="nb-label">Years of Experience</div>
+        <div className="nb-sub"><div className="live-micro-dot"></div><span id="exp-days">+{days}d and counting</span></div>
       </div>
 
       <div className="numbers-band-div"></div>
 
       <div className="numbers-band-item">
-        <span className="proj-num">{projCount}+</span>
-        <div className="nb-label">Projects Shipped</div>
-        <div className="nb-sub">across 4 companies</div>
+        <div className="nb-num" id="proj-num">{projCount}+</div>
+        <div className="nb-label">Projects Delivered</div>
+        <div className="nb-sub">Service &amp; Product</div>
       </div>
 
       <div className="numbers-band-div"></div>
 
       <div className="numbers-band-item">
-        <span className="coffee-num" ref={coffeeRef}></span>
-        <div className="nb-label">Cups of Coffee</div>
-        <div className="nb-sub">fuelling every pixel</div>
+        <div className="slot-display" id="coffee-display" ref={coffeeRef}></div>
+        <div className="nb-label">Coffees Consumed ☕</div>
+        <div className="nb-sub">and counting…</div>
       </div>
 
       <div className="numbers-band-div"></div>
 
       <div
         className="numbers-band-item nb-appr-wrap"
+        id="nb-appr-wrap"
         onClick={handleApprClick}
       >
-        <span className="appr-num" ref={apprRef}></span>
-        <div className="nb-label">Appreciations</div>
-        <div className="nb-sub">tap to appreciate</div>
+        <div className="nb-appr-inner">
+          <div className="slot-display" id="appr-display" ref={apprRef}></div>
+        </div>
+        <div className="nb-label">Appreciations <span className="nb-appr-star">✦</span></div>
+        <div className="nb-sub nb-appr-hint">// click to appreciate</div>
       </div>
     </div>
   );
