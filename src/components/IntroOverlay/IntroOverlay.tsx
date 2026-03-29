@@ -183,8 +183,8 @@ export function IntroOverlay() {
           className={`i-state${state === "entry" ? " active" : ""}`}
           id="i-entry"
         >
-          <div className="i-label">first visit experience</div>
-          <h1 className="i-title">
+          <div className="i-tag">first visit experience</div>
+          <h1 className="i-headline">
             Hey there 👋
             <br />
             Try <em>waving your hand</em> to say hi
@@ -193,14 +193,15 @@ export function IntroOverlay() {
             Your camera will detect the gesture &mdash; or use the skip button
             ↗
           </p>
-          <div className="i-cam-wrap">
-            <div className="i-cam-circle">
-              <video ref={videoRef} autoPlay muted playsInline />
+          <div className="i-cam-outer">
+            <div className="i-cam-ring">
+              <video ref={videoRef} id="intro-video" autoPlay muted playsInline />
             </div>
-            <div className="i-cam-status">{camStatus}</div>
-            <div className="i-motion-bar">
+            <div className="i-cam-status" id="i-cam-status">{camStatus}</div>
+            <div className="i-motion-wrap">
               <div
                 className="i-motion-fill"
+                id="i-motion-fill"
                 style={{ width: `${motionPct}%` }}
               />
             </div>
@@ -212,13 +213,13 @@ export function IntroOverlay() {
           className={`i-state${state === "response" ? " active" : ""}`}
           id="i-response"
         >
-          <span className="i-wave-emoji">🫰</span>
-          <h2 className="i-title">
+          <span className="i-wave-emoji">🖐🏻</span>
+          <h2 className="i-resp-title">
             Hey! Nice to
             <br />
             meet you <em>:)</em>
           </h2>
-          <p className="i-sub">// loading your experience&hellip;</p>
+          <p className="i-resp-sub">// loading your experience&hellip;</p>
         </div>
 
         {/* Loading State */}
@@ -226,18 +227,19 @@ export function IntroOverlay() {
           className={`i-state${state === "loading" ? " active" : ""}`}
           id="i-loading"
         >
-          <div className="i-label">// loading portfolio</div>
+          <div className="i-load-tag">// loading portfolio</div>
           <div className="i-pct-wrap">
-            <span className="i-pct-num">{progress}</span>
-            <span className="i-pct-sign">%</span>
+            <span className="i-pct" id="i-pct">{progress}</span>
+            <span className="i-pct-sym">%</span>
           </div>
-          <div className="i-progress-track">
+          <div className="i-bar-track">
             <div
-              className="i-progress-fill"
+              className="i-bar-fill"
+              id="i-bar-fill"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="i-load-msg">{loadMsg}</p>
+          <div className="i-load-msg" id="i-load-msg">{loadMsg}</div>
         </div>
       </div>
 
