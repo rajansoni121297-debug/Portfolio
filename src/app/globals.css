@@ -1474,6 +1474,50 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:32px 60px
 #intro-skip:hover{color:rgba(240,237,230,.6);border-color:rgba(240,237,230,.2)}
 
 /* ── EXIT ── */
+/* ── NO-WAVE STATE ── */
+.i-nowave-emoji{
+  font-size:72px;display:inline-block;
+  animation:iFloat 2s ease-in-out infinite;
+  margin-bottom:12px;
+}
+
+/* ── PLAYFUL LOADING SPINNER ── */
+.i-spinner{
+  position:relative;
+  width:80px;height:80px;
+  margin:0 auto 24px;
+}
+.i-spinner-ring{
+  position:absolute;inset:0;
+  border:2px solid transparent;
+  border-top-color:var(--gold);
+  border-right-color:rgba(200,153,58,.3);
+  border-radius:50%;
+  animation:iSpinnerRotate 1.2s cubic-bezier(.6,.2,.4,.8) infinite;
+}
+.i-spinner-ring-2{
+  inset:8px;
+  border-top-color:rgba(200,153,58,.5);
+  border-right-color:transparent;
+  border-bottom-color:var(--gold2);
+  animation-direction:reverse;
+  animation-duration:1.8s;
+}
+.i-spinner-dot{
+  position:absolute;
+  top:50%;left:50%;
+  width:8px;height:8px;
+  margin:-4px 0 0 -4px;
+  background:var(--gold);
+  border-radius:50%;
+  animation:iSpinnerPulse 1.2s ease-in-out infinite;
+}
+@keyframes iSpinnerRotate{to{transform:rotate(360deg)}}
+@keyframes iSpinnerPulse{
+  0%,100%{transform:scale(1);opacity:.6}
+  50%{transform:scale(1.4);opacity:1;box-shadow:0 0 16px rgba(200,153,58,.5)}
+}
+
 #intro-overlay.i-exit{
   opacity:0;
   transform:scale(1.04) translateY(-8px);
