@@ -23,6 +23,21 @@ const NO_WAVE_MSGS = [
   "No wave detected\u2026 maybe later? \ud83e\udd37",
   "Your hand must be busy holding coffee \u2615",
   "Alright, we\u2019ll skip the formalities \ud83d\ude04",
+  "Left on read by a camera\u2026 ouch \ud83d\ude02",
+  "Plot twist: the camera waved at you instead \ud83d\udc4b",
+  "That\u2019s okay, some legends enter without waving \ud83d\udc51",
+  "Introvert mode: activated \ud83e\uddd1\u200d\ud83d\udcbb",
+  "Hand raise? Nah. Hand vibe? Absolutely \u270c\ufe0f",
+  "Waving is overrated anyway \ud83d\ude0f",
+  "I\u2019ll pretend you waved. Deal? \ud83e\udd1d",
+  "No wave = you\u2019re too cool for gestures \ud83d\ude0e",
+  "Maybe your hand is on a coffee break \u2615\ud83d\ude34",
+  "I waited, you didn\u2019t wave\u2026 but I still like you \u2764\ufe0f",
+  "The camera blinked first. You win \ud83c\udfc6",
+  "High-five? No? Okay, entering anyway \u270b",
+  "Some people wave, some just vibe. You\u2019re a vibe person \u2728",
+  "Your hand said \u201cnot today\u201d and that\u2019s valid \ud83d\ude04",
+  "Alright, we respect the no-wave lifestyle \ud83d\ude4f",
 ];
 
 const SUSTAINED_MS = 2000;
