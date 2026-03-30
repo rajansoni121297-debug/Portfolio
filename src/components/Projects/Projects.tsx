@@ -377,7 +377,7 @@ export function Projects() {
               </div>
               <div className="pbeh-btn-wrap">
                 <a
-                  href="https://www.behance.net/"
+                  href="https://www.behance.net/raj_ui-ux"
                   target="_blank"
                   rel="noopener"
                   className="pbeh-btn"

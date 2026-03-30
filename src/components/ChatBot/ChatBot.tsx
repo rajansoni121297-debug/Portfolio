@@ -50,7 +50,7 @@ const KNOWLEDGE: KnowledgeEntry[] = [
   {
     keywords: ["project", "work", "portfolio", "case study", "shipped"],
     response:
-      "Raj has shipped 46+ projects. Key highlights:\n\n01 → HRMS 24×7 | Client Hub — Full-scale enterprise HRMS\n02 → Healthcare SaaS — Dental platform, +25% conversion\n03 → AI-Driven JD Generator — AI-powered hiring\n04 → Assessment Platform — Structured evaluation system\n05 → E-Commerce Dashboard — Lead & sales management\n06 → Patient Monitoring System\n07 → Election Management Dashboard\n08 → Food Delivery System — Multi-platform\n\nView more on his Behance: behance.net/raj_uiux",
+      "Raj has shipped 46+ projects. Key highlights:\n\n01 → HRMS 24×7 | Client Hub — Full-scale enterprise HRMS\n02 → Healthcare SaaS — Dental platform, +25% conversion\n03 → AI-Driven JD Generator — AI-powered hiring\n04 → Assessment Platform — Structured evaluation system\n05 → E-Commerce Dashboard — Lead & sales management\n06 → Patient Monitoring System\n07 → Election Management Dashboard\n08 → Food Delivery System — Multi-platform\n\nView more on his Behance: behance.net/raj_ui-ux",
   },
   {
     keywords: ["hire", "available", "open", "freelance", "job", "work together", "opportunity"],
@@ -60,7 +60,7 @@ const KNOWLEDGE: KnowledgeEntry[] = [
   {
     keywords: ["contact", "email", "phone", "reach", "connect", "message"],
     response:
-      "Here's how to reach Raj:\n\n📧 Email: rajdeepdey.6359@gmail.com\n📱 Phone: +91 635 959 3154\n🌍 Location: Ahmedabad, Gujarat, India\n🕐 Timezone: IST (GMT+5:30)\n\nSocials:\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_uiux\n→ Dribbble: dribbble.com/raj_uiux_\n→ Bento: bento.me/rajuiux",
+      "Here's how to reach Raj:\n\n📧 Email: rajdeepdey.6359@gmail.com\n📱 Phone: +91 635 959 3154\n🌍 Location: Ahmedabad, Gujarat, India\n🕐 Timezone: IST (GMT+5:30)\n\nSocials:\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux\n→ Dribbble: dribbble.com/raj_uiux_\n→ Bento: bento.me/rajuiux",
   },
   {
     keywords: ["mentor", "teach", "student", "coach", "guide", "training", "learn"],
@@ -100,7 +100,7 @@ const KNOWLEDGE: KnowledgeEntry[] = [
   {
     keywords: ["behance", "dribbble", "linkedin", "social", "link", "profile"],
     response:
-      "Raj's profiles:\n\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_uiux (46+ projects)\n→ Dribbble: dribbble.com/raj_uiux_\n→ Bento: bento.me/rajuiux",
+      "Raj's profiles:\n\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux (46+ projects)\n→ Dribbble: dribbble.com/raj_uiux_\n→ Bento: bento.me/rajuiux",
   },
   {
     keywords: ["salary", "rate", "charge", "cost", "price", "budget"],
@@ -110,7 +110,7 @@ const KNOWLEDGE: KnowledgeEntry[] = [
   {
     keywords: ["resume", "cv", "pdf", "download"],
     response:
-      "Raj's Design DNA (resume/portfolio PDF) is coming soon! In the meantime, you can explore his full work history right here on this portfolio, or check his Behance for detailed case studies: behance.net/raj_uiux",
+      "Raj's Design DNA (resume/portfolio PDF) is coming soon! In the meantime, you can explore his full work history right here on this portfolio, or check his Behance for detailed case studies: behance.net/raj_ui-ux",
   },
 ];
 
