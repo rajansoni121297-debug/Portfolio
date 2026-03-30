@@ -40,12 +40,18 @@ const NO_WAVE_MSGS = [
   "Alright, we respect the no-wave lifestyle \ud83d\ude4f",
 ];
 
-const WAVE_THRESHOLD = 50;
-const MOTION_DECAY = 0.82;
+/* Finger joint connections for drawing skeleton */
+const FINGER_JOINTS: Record<string, number[]> = {
+  thumb: [0, 1, 2, 3, 4],
+  index: [0, 5, 6, 7, 8],
+  middle: [0, 9, 10, 11, 12],
+  ring: [0, 13, 14, 15, 16],
+  pinky: [0, 17, 18, 19, 20],
+  palm: [5, 9, 13, 17],
+};
+
 const SUSTAINED_MS = 2000;
-const NO_WAVE_TIMEOUT = 15000;
-const ANALYSIS_W = 80;
-const ANALYSIS_H = 60;
+const NO_WAVE_TIMEOUT = 20000;
 
 export function IntroOverlay() {
   const [state, setState] = useState<IntroState>("entry");
@@ -58,6 +64,7 @@ export function IntroOverlay() {
   const [videoReady, setVideoReady] = useState(false);
   const [noWaveMsg, setNoWaveMsg] = useState("");
   const [wavePct, setWavePct] = useState(0);
+  const [modelLoading, setModelLoading] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -65,11 +72,9 @@ export function IntroOverlay() {
   const detectedRef = useRef(false);
   const noWaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rafRef = useRef<number>(0);
-  const prevDataRef = useRef<Uint8ClampedArray | null>(null);
-  const motionAccumRef = useRef(0);
   const sustainedStartRef = useRef<number>(0);
-  const analyseCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const analyseCtxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const wristHistoryRef = useRef<number[]>([]);
+  const detectorRef = useRef<any>(null);
 
   const stopCamera = useCallback(() => {
     if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = 0; }
@@ -82,7 +87,6 @@ export function IntroOverlay() {
     const DURATION = 4000;
     const t0 = performance.now();
     let lastMsgIdx = -1;
-
     function tick(now: number) {
       const elapsed = now - t0;
       const p = Math.min(1, elapsed / DURATION);
@@ -92,22 +96,14 @@ export function IntroOverlay() {
       else eased = Math.round(70 + ((p - 0.7) / 0.3) * 30);
       eased = Math.min(100, eased);
       setProgress(eased);
-
       const msgIdx = Math.min(LOAD_MSGS.length - 1, Math.floor((eased / 100) * LOAD_MSGS.length));
       if (msgIdx !== lastMsgIdx) {
         lastMsgIdx = msgIdx;
         setLoadMsgFading(true);
         setTimeout(() => { setLoadMsg(LOAD_MSGS[msgIdx]); setLoadMsgFading(false); }, 250);
       }
-
-      if (eased < 100) {
-        requestAnimationFrame(tick);
-      } else {
-        setTimeout(() => {
-          setExiting(true);
-          setTimeout(() => { setHidden(true); setState("done"); }, 950);
-        }, 700);
-      }
+      if (eased < 100) requestAnimationFrame(tick);
+      else setTimeout(() => { setExiting(true); setTimeout(() => { setHidden(true); setState("done"); }, 950); }, 700);
     }
     requestAnimationFrame(tick);
   }, []);
@@ -120,238 +116,231 @@ export function IntroOverlay() {
     setTimeout(() => startLoading(), 1600);
   }, [stopCamera, startLoading]);
 
-  /* ── Analyse frame: motion detection + visual heatmap overlay ── */
-  const analyseFrame = useCallback(() => {
-    const video = videoRef.current;
-    const displayCanvas = canvasRef.current;
-    const analyseCtx = analyseCtxRef.current;
-    if (!video || !displayCanvas || !analyseCtx || detectedRef.current) return;
-    if (video.readyState < 2) { rafRef.current = requestAnimationFrame(analyseFrame); return; }
-
-    const dCtx = displayCanvas.getContext("2d");
-    if (!dCtx) { rafRef.current = requestAnimationFrame(analyseFrame); return; }
-
-    // Draw mirrored video to display canvas
-    const cw = displayCanvas.width;
-    const ch = displayCanvas.height;
-    dCtx.save();
-    dCtx.translate(cw, 0);
-    dCtx.scale(-1, 1);
-    dCtx.drawImage(video, 0, 0, cw, ch);
-    dCtx.restore();
-
-    // Analyse at lower resolution
-    analyseCtx.drawImage(video, 0, 0, ANALYSIS_W, ANALYSIS_H);
-    const data = analyseCtx.getImageData(0, 0, ANALYSIS_W, ANALYSIS_H).data;
-
-    if (prevDataRef.current) {
-      // Calculate per-pixel motion and draw heatmap
-      const blockW = cw / ANALYSIS_W;
-      const blockH = ch / ANALYSIS_H;
-      let totalDiff = 0;
-      let motionPixels = 0;
-
-      for (let y = 0; y < ANALYSIS_H; y++) {
-        for (let x = 0; x < ANALYSIS_W; x++) {
-          const i = (y * ANALYSIS_W + x) * 4;
-          const diff =
-            Math.abs(data[i] - prevDataRef.current[i]) +
-            Math.abs(data[i + 1] - prevDataRef.current[i + 1]) +
-            Math.abs(data[i + 2] - prevDataRef.current[i + 2]);
-          const pixDiff = diff / 3;
-          totalDiff += pixDiff;
-
-          // Draw motion heatmap on display canvas (only where motion is significant)
-          if (pixDiff > 20) {
-            motionPixels++;
-            const alpha = Math.min(0.7, (pixDiff - 20) / 100);
-            // Mirror X for display
-            const drawX = cw - (x * blockW) - blockW;
-            const drawY = y * blockH;
-
-            // Gold glow for high motion areas
-            if (pixDiff > 50) {
-              dCtx.fillStyle = `rgba(232, 184, 75, ${alpha * 0.8})`;
-              dCtx.fillRect(drawX, drawY, blockW + 1, blockH + 1);
-            } else {
-              dCtx.fillStyle = `rgba(200, 153, 58, ${alpha * 0.5})`;
-              dCtx.fillRect(drawX, drawY, blockW + 1, blockH + 1);
-            }
-          }
-        }
+  /* ── Draw hand skeleton with gold lines ── */
+  const drawHand = useCallback((keypoints: { x: number; y: number }[], ctx: CanvasRenderingContext2D, w: number, h: number) => {
+    // Draw finger bones (lines between joints)
+    for (const finger of Object.values(FINGER_JOINTS)) {
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(200, 153, 58, 0.8)";
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = "round";
+      for (let i = 0; i < finger.length; i++) {
+        const pt = keypoints[finger[i]];
+        if (!pt) continue;
+        // Mirror X
+        const px = w - pt.x;
+        const py = pt.y;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
       }
+      ctx.stroke();
 
-      // Draw motion outline/contour around active areas
-      if (motionPixels > 30) {
-        // Draw connecting dots on high-motion regions
-        dCtx.strokeStyle = "rgba(232, 184, 75, 0.6)";
-        dCtx.lineWidth = 1.5;
-        dCtx.setLineDash([3, 3]);
-        let firstPoint = true;
-        dCtx.beginPath();
-        for (let y = 0; y < ANALYSIS_H; y += 3) {
-          for (let x = 0; x < ANALYSIS_W; x += 3) {
-            const i = (y * ANALYSIS_W + x) * 4;
-            const diff = (
-              Math.abs(data[i] - prevDataRef.current[i]) +
-              Math.abs(data[i + 1] - prevDataRef.current[i + 1]) +
-              Math.abs(data[i + 2] - prevDataRef.current[i + 2])
-            ) / 3;
-            if (diff > 40) {
-              const drawX = cw - (x * blockW) - blockW / 2;
-              const drawY = y * blockH + blockH / 2;
-              if (firstPoint) { dCtx.moveTo(drawX, drawY); firstPoint = false; }
-              else dCtx.lineTo(drawX, drawY);
-            }
-          }
-        }
-        dCtx.stroke();
-        dCtx.setLineDash([]);
-
-        // Draw dots on peak motion points
-        for (let y = 0; y < ANALYSIS_H; y += 4) {
-          for (let x = 0; x < ANALYSIS_W; x += 4) {
-            const i = (y * ANALYSIS_W + x) * 4;
-            const diff = (
-              Math.abs(data[i] - prevDataRef.current[i]) +
-              Math.abs(data[i + 1] - prevDataRef.current[i + 1]) +
-              Math.abs(data[i + 2] - prevDataRef.current[i + 2])
-            ) / 3;
-            if (diff > 60) {
-              const drawX = cw - (x * blockW) - blockW / 2;
-              const drawY = y * blockH + blockH / 2;
-              dCtx.beginPath();
-              dCtx.arc(drawX, drawY, 3, 0, Math.PI * 2);
-              dCtx.fillStyle = "rgba(232, 184, 75, 0.9)";
-              dCtx.fill();
-              // Glow
-              dCtx.beginPath();
-              dCtx.arc(drawX, drawY, 7, 0, Math.PI * 2);
-              dCtx.fillStyle = "rgba(232, 184, 75, 0.15)";
-              dCtx.fill();
-            }
-          }
-        }
+      // Draw glow line on top
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(232, 184, 75, 0.25)";
+      ctx.lineWidth = 6;
+      for (let i = 0; i < finger.length; i++) {
+        const pt = keypoints[finger[i]];
+        if (!pt) continue;
+        const px = w - pt.x;
+        const py = pt.y;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
       }
-
-      // Overall motion calculation
-      const avgDiff = totalDiff / (ANALYSIS_W * ANALYSIS_H);
-      motionAccumRef.current =
-        avgDiff > 7
-          ? Math.min(100, motionAccumRef.current + avgDiff * 1.4)
-          : motionAccumRef.current * MOTION_DECAY;
-
-      const pct = Math.round(motionAccumRef.current);
-
-      // Update status based on motion
-      if (motionPixels > 50) {
-        setCamStatus("// motion detected! wave your hand \ud83d\udc4b");
-      } else if (motionPixels > 15) {
-        setCamStatus("// I can see movement\u2026 wave bigger! \u270b");
-      }
-
-      // Sustained wave detection
-      if (motionAccumRef.current >= WAVE_THRESHOLD) {
-        if (sustainedStartRef.current === 0) {
-          sustainedStartRef.current = performance.now();
-          setCamStatus("// waving detected! keep going\u2026 \ud83d\udc4b");
-        }
-        const elapsed = performance.now() - sustainedStartRef.current;
-        const wavePctVal = Math.min(100, Math.round((elapsed / SUSTAINED_MS) * 100));
-        setWavePct(wavePctVal);
-
-        if (elapsed >= SUSTAINED_MS) {
-          setCamStatus("// wave confirmed! \u2713");
-          setWavePct(100);
-          onWaveConfirmed();
-          return;
-        }
-      } else {
-        if (sustainedStartRef.current > 0) {
-          sustainedStartRef.current = 0;
-          setWavePct(0);
-          setCamStatus("// almost! keep waving\u2026");
-        }
-      }
-    } else {
-      // First frame — just draw mirrored video, no analysis yet
-      setCamStatus("// camera ready! wave your hand \ud83d\udc4b");
+      ctx.stroke();
     }
 
-    prevDataRef.current = new Uint8ClampedArray(data);
-    rafRef.current = requestAnimationFrame(analyseFrame);
-  }, [onWaveConfirmed]);
+    // Draw joints (dots)
+    const tips = [4, 8, 12, 16, 20];
+    for (let i = 0; i < keypoints.length; i++) {
+      const pt = keypoints[i];
+      if (!pt) continue;
+      const px = w - pt.x;
+      const py = pt.y;
+      const isTip = tips.includes(i);
 
-  /* ── Start camera ── */
-  useEffect(() => {
+      // Glow halo on fingertips
+      if (isTip) {
+        ctx.beginPath();
+        ctx.arc(px, py, 12, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(232, 184, 75, 0.12)";
+        ctx.fill();
+      }
+
+      // Joint dot
+      ctx.beginPath();
+      ctx.arc(px, py, isTip ? 5 : 3, 0, Math.PI * 2);
+      ctx.fillStyle = isTip ? "#E8B84B" : "rgba(200, 153, 58, 0.9)";
+      ctx.fill();
+
+      // Bright center on tips
+      if (isTip) {
+        ctx.beginPath();
+        ctx.arc(px, py, 2, 0, Math.PI * 2);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+      }
+    }
+  }, []);
+
+  /* ── Detect wave from wrist Y oscillation ── */
+  const detectWave = useCallback((keypoints: { x: number; y: number }[]) => {
+    const wrist = keypoints[0];
+    if (!wrist) return false;
+    const history = wristHistoryRef.current;
+    history.push(wrist.y);
+    if (history.length > 30) history.shift();
+    if (history.length < 10) return false;
+
+    let dirChanges = 0;
+    let lastDir = 0;
+    for (let i = 1; i < history.length; i++) {
+      const diff = history[i] - history[i - 1];
+      const dir = diff > 2 ? 1 : diff < -2 ? -1 : 0;
+      if (dir !== 0 && dir !== lastDir) { dirChanges++; lastDir = dir; }
+    }
+    return dirChanges >= 3;
+  }, []);
+
+  /* ── Main detection loop ── */
+  const detectLoop = useCallback(async () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    if (!video || !canvas) return;
+    const detector = detectorRef.current;
+    if (!video || !canvas || !detector || detectedRef.current) return;
+    if (video.readyState < 2) { rafRef.current = requestAnimationFrame(detectLoop); return; }
 
-    // Create offscreen analysis canvas
-    const aCanvas = document.createElement("canvas");
-    aCanvas.width = ANALYSIS_W;
-    aCanvas.height = ANALYSIS_H;
-    analyseCanvasRef.current = aCanvas;
-    analyseCtxRef.current = aCanvas.getContext("2d", { willReadFrequently: true });
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // Draw mirrored video
+    ctx.save();
+    ctx.translate(w, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, w, h);
+    ctx.restore();
+
+    try {
+      const hands = await detector.estimateHands(video);
+      if (hands && hands.length > 0) {
+        const hand = hands[0];
+        const keypoints = hand.keypoints || hand.landmarks;
+        if (keypoints && keypoints.length >= 21) {
+          drawHand(keypoints, ctx, w, h);
+
+          setCamStatus("// hand detected! wave to say hi \ud83d\udc4b");
+
+          const isWaving = detectWave(keypoints);
+          if (isWaving) {
+            if (sustainedStartRef.current === 0) {
+              sustainedStartRef.current = performance.now();
+              setCamStatus("// waving! keep going\u2026 \ud83d\udc4b");
+            }
+            const elapsed = performance.now() - sustainedStartRef.current;
+            setWavePct(Math.min(100, Math.round((elapsed / SUSTAINED_MS) * 100)));
+            if (elapsed >= SUSTAINED_MS) {
+              setCamStatus("// wave confirmed! \u2713");
+              setWavePct(100);
+              onWaveConfirmed();
+              return;
+            }
+          } else {
+            if (sustainedStartRef.current > 0) {
+              sustainedStartRef.current = 0;
+              setWavePct(0);
+              setCamStatus("// almost! keep waving\u2026");
+            }
+          }
+        }
+      } else {
+        wristHistoryRef.current = [];
+        sustainedStartRef.current = 0;
+        setWavePct(0);
+      }
+    } catch {
+      // Frame estimation error — skip
+    }
+
+    if (!detectedRef.current) {
+      rafRef.current = requestAnimationFrame(detectLoop);
+    }
+  }, [drawHand, detectWave, onWaveConfirmed]);
+
+  /* ── Init camera + load model ── */
+  useEffect(() => {
+    const video = videoRef.current!;
+    const canvas = canvasRef.current!;
+    if (!video || !canvas) return;
 
     let mounted = true;
 
-    const timer = setTimeout(() => {
-      navigator.mediaDevices
-        .getUserMedia({ video: { facingMode: "user", width: 320, height: 240 } })
-        .then((stream) => {
-          if (!mounted) { stream.getTracks().forEach(t => t.stop()); return; }
-          streamRef.current = stream;
-          video.srcObject = stream;
-
-          const onCanPlay = () => {
-            video.play().then(() => {
-              setVideoReady(true);
-              // Set display canvas size
-              canvas.width = video.videoWidth || 320;
-              canvas.height = video.videoHeight || 240;
-              setCamStatus("// camera ready! wave your hand \ud83d\udc4b");
-
-              // Start analysis after camera stabilizes
-              setTimeout(() => {
-                if (mounted && !detectedRef.current) {
-                  rafRef.current = requestAnimationFrame(analyseFrame);
-
-                  // No-wave timeout
-                  noWaveTimerRef.current = setTimeout(() => {
-                    if (!detectedRef.current && mounted) {
-                      const msg = NO_WAVE_MSGS[Math.floor(Math.random() * NO_WAVE_MSGS.length)];
-                      setNoWaveMsg(msg);
-                      setState("nowave");
-                      setTimeout(() => {
-                        if (!detectedRef.current) { detectedRef.current = true; stopCamera(); startLoading(); }
-                      }, 2500);
-                    }
-                  }, NO_WAVE_TIMEOUT);
-                }
-              }, 800);
-            }).catch(() => {
-              setCamStatus("// camera error \u2014 tap skip ↗");
-            });
-          };
-
-          if (video.readyState >= 3) onCanPlay();
-          else video.addEventListener("canplay", onCanPlay, { once: true });
-        })
-        .catch(() => {
-          setCamStatus("// camera not available \u2014 tap skip ↗");
-          setTimeout(() => {
-            if (!detectedRef.current && mounted) { detectedRef.current = true; startLoading(); }
-          }, 3000);
+    async function init() {
+      try {
+        // 1. Start camera
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: 320, height: 240 },
         });
-    }, 500);
+        if (!mounted) { stream.getTracks().forEach(t => t.stop()); return; }
 
-    return () => {
-      mounted = false;
-      clearTimeout(timer);
-      stopCamera();
-    };
+        streamRef.current = stream;
+        video.srcObject = stream;
+        await video.play();
+        setVideoReady(true);
+        canvas.width = video.videoWidth || 320;
+        canvas.height = video.videoHeight || 240;
+        setCamStatus("// loading hand detection model\u2026");
+        setModelLoading(true);
+
+        // 2. Load TF.js hand detection model
+        const tf = await import("@tensorflow/tfjs");
+        await tf.ready();
+
+        const handPoseDetection = await import("@tensorflow-models/hand-pose-detection");
+        const model = handPoseDetection.SupportedModels.MediaPipeHands;
+        const detector = await handPoseDetection.createDetector(model, {
+          runtime: "tfjs",
+          maxHands: 1,
+          modelType: "lite",
+        });
+
+        if (!mounted) return;
+        detectorRef.current = detector;
+        setModelLoading(false);
+        setCamStatus("// show your hand to the camera \u270b");
+
+        // 3. Start detection loop
+        setTimeout(() => {
+          if (mounted && !detectedRef.current) {
+            rafRef.current = requestAnimationFrame(detectLoop);
+
+            // No-wave timeout
+            noWaveTimerRef.current = setTimeout(() => {
+              if (!detectedRef.current && mounted) {
+                const msg = NO_WAVE_MSGS[Math.floor(Math.random() * NO_WAVE_MSGS.length)];
+                setNoWaveMsg(msg);
+                setState("nowave");
+                setTimeout(() => {
+                  if (!detectedRef.current) { detectedRef.current = true; stopCamera(); startLoading(); }
+                }, 2500);
+              }
+            }, NO_WAVE_TIMEOUT);
+          }
+        }, 500);
+
+      } catch (err) {
+        console.warn("Init failed:", err);
+        setCamStatus("// camera not available \u2014 tap skip \u2197");
+        setModelLoading(false);
+        setTimeout(() => {
+          if (!detectedRef.current && mounted) { detectedRef.current = true; startLoading(); }
+        }, 3000);
+      }
+    }
+
+    const timer = setTimeout(init, 500);
+    return () => { mounted = false; clearTimeout(timer); stopCamera(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -369,12 +358,13 @@ export function IntroOverlay() {
           <p className="i-sub">Wave for 2 seconds \u2014 or use the skip button \u2197</p>
           <div className="i-cam-outer">
             <div className="i-cam-ring">
-              {/* Hidden video element for camera stream */}
               <video ref={videoRef} id="intro-video" autoPlay muted playsInline className={videoReady ? "on" : ""} style={{ position: "absolute", opacity: 0, pointerEvents: "none" }} />
-              {/* Visible canvas showing mirrored feed + motion overlay */}
               <canvas ref={canvasRef} className="i-hand-canvas on" />
             </div>
-            <div className="i-cam-status" id="i-cam-status">{camStatus}</div>
+            <div className="i-cam-status" id="i-cam-status">
+              {modelLoading && <span className="i-model-spinner" />}
+              {camStatus}
+            </div>
             <div className="i-motion-wrap">
               <div className="i-motion-fill" style={{ width: `${wavePct}%` }} />
             </div>
@@ -382,21 +372,21 @@ export function IntroOverlay() {
           </div>
         </div>
 
-        {/* No Wave State */}
-        <div className={`i-state${state === "nowave" ? " active" : ""}`} id="i-nowave">
+        {/* No Wave */}
+        <div className={`i-state${state === "nowave" ? " active" : ""}`}>
           <span className="i-nowave-emoji">&#129335;</span>
           <h2 className="i-resp-title">{noWaveMsg}</h2>
           <p className="i-resp-sub">// no worries, loading anyway\u2026</p>
         </div>
 
-        {/* Response State */}
+        {/* Response */}
         <div className={`i-state${state === "response" ? " active" : ""}`} id="i-response">
           <span className="i-wave-emoji">&#128400;</span>
           <h2 className="i-resp-title">Hey! Nice to<br/>meet you <em>:)</em></h2>
           <p className="i-resp-sub">// loading your experience\u2026</p>
         </div>
 
-        {/* Loading State */}
+        {/* Loading */}
         <div className={`i-state${state === "loading" ? " active" : ""}`} id="i-loading">
           <div className="i-load-tag">// loading portfolio</div>
           <div className="i-spinner"><div className="i-spinner-ring"/><div className="i-spinner-ring i-spinner-ring-2"/><div className="i-spinner-dot"/></div>

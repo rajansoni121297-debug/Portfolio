@@ -1405,6 +1405,13 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:32px 60px
   animation:iPulse 1s ease-in-out infinite;
 }
 @keyframes iPulse{0%,100%{opacity:.6}50%{opacity:1}}
+.i-model-spinner{
+  display:inline-block;width:10px;height:10px;
+  border:1.5px solid rgba(200,153,58,.3);
+  border-top-color:var(--gold);
+  border-radius:50%;margin-right:8px;vertical-align:middle;
+  animation:iSpin .8s linear infinite;
+}
 .i-cam-status{
   font-family:var(--font-mono),'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;
   text-transform:uppercase;color:rgba(200,153,58,.5);text-align:center;
