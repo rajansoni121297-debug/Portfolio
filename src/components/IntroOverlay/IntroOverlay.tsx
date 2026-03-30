@@ -232,13 +232,8 @@ export function IntroOverlay() {
         hands.onResults((results: any) => {
           if (!mounted || detectedRef.current) return;
 
-          // Clear and draw mirrored video
-          ctx.save();
+          // Clear canvas (transparent — video shows through underneath)
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.translate(canvas.width, 0);
-          ctx.scale(-1, 1);
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          ctx.restore();
 
           if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
             const landmarks = results.multiHandLandmarks[0];
@@ -379,11 +374,10 @@ export function IntroOverlay() {
                 muted
                 playsInline
                 className={videoReady ? "on" : ""}
-                style={{ display: videoReady ? "none" : "block" }}
               />
               <canvas
                 ref={canvasRef}
-                className={`i-hand-canvas${videoReady ? " on" : ""}`}
+                className="i-hand-canvas on"
               />
             </div>
             <div className="i-cam-status" id="i-cam-status">{camStatus}</div>
