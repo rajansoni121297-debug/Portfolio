@@ -132,6 +132,7 @@ export function Contact() {
               <a href="https://linkedin.com/in/6359raj" className="soc-link" target="_blank">LinkedIn</a>
               <a href="https://www.behance.net/raj_ui-ux" className="soc-link" target="_blank">Behance</a>
               <a href="https://dribbble.com/raj_uiux_" className="soc-link" target="_blank">Dribbble</a>
+              <a href="https://www.instagram.com/raj_uiux_/" className="soc-link" target="_blank">Instagram</a>
               <a href="https://bento.me/rajuiux" className="soc-link" target="_blank">Bento</a>
             </div>
           </div>

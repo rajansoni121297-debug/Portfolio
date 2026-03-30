@@ -60,7 +60,7 @@ const KNOWLEDGE: KnowledgeEntry[] = [
   {
     keywords: ["contact", "email", "phone", "reach", "connect", "message"],
     response:
-      "Here's how to reach Raj:\n\n📧 Email: rajdeepdey.6359@gmail.com\n📱 Phone: +91 635 959 3154\n🌍 Location: Ahmedabad, Gujarat, India\n🕐 Timezone: IST (GMT+5:30)\n\nSocials:\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux\n→ Dribbble: dribbble.com/raj_uiux_\n→ Bento: bento.me/rajuiux",
+      "Here's how to reach Raj:\n\n📧 Email: rajdeepdey.6359@gmail.com\n📱 Phone: +91 635 959 3154\n🌍 Location: Ahmedabad, Gujarat, India\n🕐 Timezone: IST (GMT+5:30)\n\nSocials:\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux\n→ Instagram: instagram.com/raj_uiux_\n→ Dribbble: dribbble.com/raj_uiux_\n→ Bento: bento.me/rajuiux",
   },
   {
     keywords: ["mentor", "teach", "student", "coach", "guide", "training", "learn"],
@@ -98,9 +98,9 @@ const KNOWLEDGE: KnowledgeEntry[] = [
       "Raj's design process:\n\n1️⃣ Discovery — Stakeholder interviews, BRD creation, requirements\n2️⃣ Research — User interviews, journey mapping, competitive analysis\n3️⃣ Design — Wireframes, high-fidelity UI, prototypes in Figma\n4️⃣ Validate — Usability testing, iterate based on insights\n5️⃣ Handoff — Structured documentation, reusable patterns, dev collaboration\n\nAI tools are integrated at every stage for speed and quality.",
   },
   {
-    keywords: ["behance", "dribbble", "linkedin", "social", "link", "profile"],
+    keywords: ["behance", "dribbble", "linkedin", "social", "link", "profile", "instagram", "insta"],
     response:
-      "Raj's profiles:\n\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux (46+ projects)\n→ Dribbble: dribbble.com/raj_uiux_\n→ Bento: bento.me/rajuiux",
+      "Raj's profiles:\n\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux (46+ projects)\n→ Instagram: instagram.com/raj_uiux_\n→ Dribbble: dribbble.com/raj_uiux_\n→ Bento: bento.me/rajuiux",
   },
   {
     keywords: ["salary", "rate", "charge", "cost", "price", "budget"],
