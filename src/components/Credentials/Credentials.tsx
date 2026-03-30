@@ -27,7 +27,7 @@ const certificates: Certificate[] = [
 const video = {
   title: "Design Thinking Workshop",
   subtitle: "A quick session on my design process",
-  youtubeId: "dQw4w9WgXcQ", // Replace with actual YouTube video ID
+  youtubeId: "-F-HnG7Ooxs",
   thumbnail: "", // Will use YouTube thumbnail
 };
 
