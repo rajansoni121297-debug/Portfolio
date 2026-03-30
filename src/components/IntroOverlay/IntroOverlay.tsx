@@ -276,7 +276,7 @@ export function IntroOverlay() {
             Try <em>waving your hand</em> to say hi
           </h1>
           <p className="i-sub">
-            Wave for 2 seconds &mdash; or use the skip button &nearr;
+            Wave for 2 seconds — or use the skip button ↗
           </p>
           <div className="i-cam-outer">
             <div className="i-cam-ring">
