@@ -228,8 +228,9 @@ export function IntroOverlay() {
                   }
                 }, NO_WAVE_TIMEOUT);
               }, CAMERA_STABILIZE_MS);
-            }).catch(() => {
-              setCamStatus("// camera error \u2014 use skip \u2197");
+            }).catch((err) => {
+              console.warn("Video play failed:", err);
+              setCamStatus("// camera error — tap skip to continue ↗");
             });
           };
 
@@ -237,10 +238,24 @@ export function IntroOverlay() {
             onCanPlay();
           } else {
             video.addEventListener("canplay", onCanPlay, { once: true });
+            // Fallback if canplay never fires
+            setTimeout(() => {
+              if (!videoReady) {
+                setCamStatus("// camera taking too long — tap skip ↗");
+              }
+            }, 5000);
           }
         })
-        .catch(() => {
-          setCamStatus("// camera blocked \u2014 use skip \u2197");
+        .catch((err) => {
+          console.warn("Camera access failed:", err);
+          setCamStatus("// camera not available — tap skip to enter ↗");
+          // Auto-skip after 3s if camera fails
+          setTimeout(() => {
+            if (!detectedRef.current) {
+              detectedRef.current = true;
+              startLoading();
+            }
+          }, 3000);
         });
     }, 500);
 

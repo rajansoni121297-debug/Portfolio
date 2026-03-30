@@ -18,12 +18,12 @@ export function CustomCursor() {
     const exploreCursor = document.getElementById("cursor-explore") as HTMLDivElement;
     const exploreLabel = document.getElementById("cursor-explore-label") as HTMLSpanElement;
 
-    let mx = -100,
-      my = -100;
-    let rx = -100,
-      ry = -100;
-    let ex = -100,
-      ey = -100;
+    if (!cursor || !ring) return;
+
+    let mx = 0, my = 0;
+    let rx = 0, ry = 0;
+    let ecx = 0, ecy = 0;
+    let exploreActive = false;
     let rafId: number;
 
     // --- Idle cursor ---
@@ -38,16 +38,20 @@ export function CustomCursor() {
     let idleTimer: ReturnType<typeof setTimeout> | null = null;
 
     function showIdle() {
+      if (!idleMsg) return;
       idleMsg.textContent = idleMessages[idleIndex % idleMessages.length];
-      idleMsg.style.left = mx + 18 + "px";
-      idleMsg.style.top = my - 12 + "px";
+      idleMsg.style.left = (mx + 24) + "px";
+      idleMsg.style.top = (my - 12) + "px";
       idleMsg.style.opacity = "1";
+      idleMsg.style.transform = "translateY(0)";
       cursor.classList.add("idle");
       idleIndex++;
     }
 
     function hideIdle() {
+      if (!idleMsg) return;
       idleMsg.style.opacity = "0";
+      idleMsg.style.transform = "translateY(4px)";
       cursor.classList.remove("idle");
     }
 
@@ -57,78 +61,98 @@ export function CustomCursor() {
       idleTimer = setTimeout(showIdle, 4500);
     }
 
-    // --- Mouse move ---
+    // --- Mouse move --- position with transform like original
     function onMouseMove(e: MouseEvent) {
       mx = e.clientX;
       my = e.clientY;
-      cursor.style.left = mx + "px";
-      cursor.style.top = my + "px";
+      cursor.style.transform = `translate(${mx}px,${my}px) translate(-50%,-50%)`;
+      if (clabel) {
+        clabel.style.transform = `translate(${mx}px,${my}px)`;
+      }
+      if (idleMsg) {
+        idleMsg.style.left = (mx + 24) + "px";
+        idleMsg.style.top = (my - 12) + "px";
+      }
+      if (exploreActive) {
+        ecx = mx;
+        ecy = my;
+      }
       resetIdleTimer();
     }
 
-    // --- Click ring effect ---
-    function onMouseDown() {
-      ring.classList.add("click");
-    }
-    function onMouseUp() {
-      ring.classList.remove("click");
-    }
-
-    // --- Activity listeners for idle ---
-    function onActivity() {
-      resetIdleTimer();
-    }
-
-    // --- Animation loop ---
+    // --- Ring lerp + explore cursor lerp ---
     function animate() {
-      // Ring lerp
       rx += (mx - rx) * 0.12;
       ry += (my - ry) * 0.12;
-      ring.style.left = rx + "px";
-      ring.style.top = ry + "px";
+      ring.style.transform = `translate(${rx}px,${ry}px) translate(-50%,-50%)`;
 
-      // Explore cursor lerp
-      ex += (mx - ex) * 0.1;
-      ey += (my - ey) * 0.1;
-      exploreCursor.style.left = ex + "px";
-      exploreCursor.style.top = ey + "px";
+      if (exploreActive && exploreCursor) {
+        ecx += (mx - ecx) * 0.10;
+        ecy += (my - ecy) * 0.10;
+        exploreCursor.style.left = ecx + "px";
+        exploreCursor.style.top = ecy + "px";
+      }
 
       rafId = requestAnimationFrame(animate);
     }
     rafId = requestAnimationFrame(animate);
 
+    // --- Click ring effect ---
+    function onMouseDown() { ring.classList.add("click"); }
+    function onMouseUp() { ring.classList.remove("click"); }
+
     // --- setCursor ---
     (window as any).setCursor = (el: HTMLElement, label: string) => {
+      if (!el || typeof el.addEventListener !== "function") return;
       el.addEventListener("mouseenter", () => {
         ring.classList.add("hover");
-        clabel.textContent = label;
-        clabel.style.opacity = "1";
+        if (clabel && label) {
+          clabel.textContent = label;
+          clabel.style.opacity = "1";
+        }
       });
       el.addEventListener("mouseleave", () => {
         ring.classList.remove("hover");
-        clabel.textContent = "";
-        clabel.style.opacity = "0";
+        if (clabel) {
+          clabel.textContent = "";
+          clabel.style.opacity = "0";
+        }
       });
     };
 
     // --- setExploreCursor ---
     (window as any).setExploreCursor = (el: HTMLElement, label: string) => {
-      el.addEventListener("mouseenter", () => {
-        exploreLabel.textContent = label;
-        exploreCursor.classList.add("visible");
+      if (!el || typeof el.addEventListener !== "function") return;
+      el.addEventListener("mouseenter", (e: Event) => {
+        const me = e as MouseEvent;
+        exploreActive = true;
+        ecx = me.clientX;
+        ecy = me.clientY;
+        if (exploreCursor) {
+          exploreCursor.style.left = ecx + "px";
+          exploreCursor.style.top = ecy + "px";
+          if (exploreLabel) exploreLabel.textContent = label;
+          exploreCursor.classList.add("visible");
+        }
         cursor.classList.add("hidden");
         ring.classList.add("hidden");
       });
+      el.addEventListener("mousemove", (e: Event) => {
+        const me = e as MouseEvent;
+        ecx = me.clientX;
+        ecy = me.clientY;
+      });
       el.addEventListener("mouseleave", () => {
-        exploreCursor.classList.remove("visible");
+        exploreActive = false;
+        if (exploreCursor) exploreCursor.classList.remove("visible", "pressed");
         cursor.classList.remove("hidden");
         ring.classList.remove("hidden");
       });
       el.addEventListener("mousedown", () => {
-        exploreCursor.classList.add("pressed");
+        if (exploreCursor) exploreCursor.classList.add("pressed");
       });
       el.addEventListener("mouseup", () => {
-        exploreCursor.classList.remove("pressed");
+        if (exploreCursor) exploreCursor.classList.remove("pressed");
       });
     };
 
@@ -136,10 +160,9 @@ export function CustomCursor() {
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mouseup", onMouseUp);
-    window.addEventListener("keydown", onActivity);
-    window.addEventListener("scroll", onActivity);
+    document.addEventListener("keydown", resetIdleTimer);
+    document.addEventListener("scroll", resetIdleTimer, { passive: true });
 
-    // Start idle timer
     resetIdleTimer();
 
     return () => {
@@ -147,8 +170,8 @@ export function CustomCursor() {
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("mouseup", onMouseUp);
-      window.removeEventListener("keydown", onActivity);
-      window.removeEventListener("scroll", onActivity);
+      document.removeEventListener("keydown", resetIdleTimer);
+      document.removeEventListener("scroll", resetIdleTimer);
       if (idleTimer) clearTimeout(idleTimer);
       delete (window as any).setCursor;
       delete (window as any).setExploreCursor;
@@ -164,7 +187,7 @@ export function CustomCursor() {
       <div id="clabel"></div>
       <div id="cursor-idle-msg"></div>
       <div id="cursor-explore">
-        <span id="cursor-explore-label">Explore &#x2197;</span>
+        <span id="cursor-explore-label">Explore ↗</span>
       </div>
     </>
   );
