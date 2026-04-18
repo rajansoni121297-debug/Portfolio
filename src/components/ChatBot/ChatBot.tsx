@@ -60,7 +60,7 @@ const KNOWLEDGE: KnowledgeEntry[] = [
   {
     keywords: ["contact", "email", "phone", "reach", "connect", "message"],
     response:
-      "Here's how to reach Raj:\n\n📧 Email: rajdeepdey.6359@gmail.com\n📱 Phone: +91 635 959 3154\n🌍 Location: Ahmedabad, Gujarat, India\n🕐 Timezone: IST (GMT+5:30)\n\nSocials:\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux\n→ Instagram: instagram.com/raj_uiux_\n→ Dribbble: dribbble.com/raj_uiux_\n→ Bento: bento.me/rajuiux",
+      "Here's how to reach Raj:\n\n📧 Email: rajdeepdey.6359@gmail.com\n📱 Phone: +91 635 959 3154\n🌍 Location: Ahmedabad, Gujarat, India\n🕐 Timezone: IST (GMT+5:30)\n\nSocials:\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux\n→ Instagram: instagram.com/raj_uiux_\n→ Dribbble: dribbble.com/raj_uiux_",
   },
   {
     keywords: ["mentor", "teach", "student", "coach", "guide", "training", "learn"],
@@ -100,7 +100,7 @@ const KNOWLEDGE: KnowledgeEntry[] = [
   {
     keywords: ["behance", "dribbble", "linkedin", "social", "link", "profile", "instagram", "insta"],
     response:
-      "Raj's profiles:\n\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux (46+ projects)\n→ Instagram: instagram.com/raj_uiux_\n→ Dribbble: dribbble.com/raj_uiux_\n→ Bento: bento.me/rajuiux",
+      "Raj's profiles:\n\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux (46+ projects)\n→ Instagram: instagram.com/raj_uiux_\n→ Dribbble: dribbble.com/raj_uiux_",
   },
   {
     keywords: ["salary", "rate", "charge", "cost", "price", "budget"],
