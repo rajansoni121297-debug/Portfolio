@@ -153,6 +153,49 @@ export function Nav() {
     }
   };
 
+  /* ── 6. Hire Me Click Interaction ── */
+  const handleHireClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    window.dispatchEvent(new Event("open-contact-modal"));
+    
+    if (window.toast) {
+      window.toast("// Great choice! Let's build something ✦");
+    }
+
+    // Creative Confetti Burst
+    for (let i = 0; i < 40; i++) {
+      const p = document.createElement("div");
+      document.body.appendChild(p);
+
+      const size = Math.random() * 6 + 4;
+      p.style.width = `${size}px`;
+      p.style.height = `${size}px`;
+      const colors = ["var(--gold)", "var(--gold2)", "#ffffff"];
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.position = "fixed";
+      p.style.left = `${e.clientX}px`;
+      p.style.top = `${e.clientY}px`;
+      p.style.borderRadius = "50%";
+      p.style.pointerEvents = "none";
+      p.style.zIndex = "9999";
+
+      const angle = Math.random() * Math.PI * 2;
+      const velocity = 60 + Math.random() * 120;
+      const tx = Math.cos(angle) * velocity;
+      const ty = Math.sin(angle) * velocity - 60;
+
+      p.animate(
+        [
+          { transform: "translate(0,0) scale(1)", opacity: 1 },
+          { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+        ],
+        { duration: 800 + Math.random() * 400, easing: "cubic-bezier(0, .9, .57, 1)" }
+      );
+
+      setTimeout(() => p.remove(), 1200);
+    }
+  };
+
   return (
     <nav id="nav" ref={navRef}>
       <a href="#" className="nav-logo">
@@ -179,7 +222,7 @@ export function Nav() {
           </button>
         </li>
       </ul>
-      <a href="mailto:rajdeepdey.6359@gmail.com" className="nav-cta">
+      <a href="#contact" className="nav-cta" onClick={handleHireClick}>
         <span>Hire Me</span>
       </a>
     </nav>

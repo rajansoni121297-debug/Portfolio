@@ -322,7 +322,10 @@ export function Hero() {
       </div>
 
       <div className="scroll-hint">
-        <span>See selected work &darr;</span>
+        <span className="scroll-hint-text">Scroll to explore</span>
+        <div className="scroll-arrow">
+          <div className="scroll-line"></div>
+        </div>
       </div>
     </section>
   );

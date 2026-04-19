@@ -3,9 +3,9 @@
 import { useEffect } from "react";
 
 const stats = [
-  { num: "50+", label: "Students Mentored" },
-  { num: "30+", label: "Placed in Jobs" },
-  { num: "100+", label: "Sessions Conducted" },
+  { num: "30+", label: "Students Mentored" },
+  { num: "20+", label: "Placed in Jobs" },
+  { num: "16+", label: "Sessions Conducted" },
 ];
 
 const highlights = [
@@ -79,6 +79,18 @@ export function Mentorship() {
               <p className="mentor-card-desc">{h.desc}</p>
             </div>
           ))}
+        </div>
+
+        {/* Seminars / Certifications */}
+        <div className="mentor-cert reveal rd2" style={{ marginTop: "48px", padding: "32px", background: "var(--card-bg)", borderRadius: "var(--rad)", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "24px" }}>
+          <div>
+            <div style={{ fontSize: "13px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px", fontWeight: "500" }}>Guest Speaker</div>
+            <h4 style={{ margin: "0 0 8px 0", fontSize: "1.3rem", fontWeight: "600", color: "var(--text)" }}>Pixel Perfect – UI/UX Workshop with Figma</h4>
+            <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.95rem", lineHeight: "1.5" }}>Conducted a hands-on seminar sharing practical insights, workflows, and deep UI/UX knowledge for the Rotaract Club of Delhi Midtown Maitreyi.</p>
+          </div>
+          <a href="https://drive.google.com/file/d/1oCbP3-rNaLZ0Npbijp4A7P4-ZAmnlO_n/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="nav-cta" style={{ flexShrink: 0, textDecoration: "none" }}>
+             <span>View Certificate ↗</span>
+          </a>
         </div>
 
         {/* Quote */}

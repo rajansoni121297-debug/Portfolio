@@ -77,40 +77,40 @@ export function Tools() {
       </section>
       <div className="tgrid reveal">
         <div className="tcat">
-          <div className="tcat-label">Design Tools</div>
+          <div className="tcat-label">Design Tools &amp; Tech</div>
           <div className="tcat-item">Figma</div>
-          <div className="tcat-item">Figma Make</div>
-          <div className="tcat-item">Adobe XD</div>
-          <div className="tcat-item">Balsamiq</div>
-          <div className="tcat-item">Wireframe.Cc</div>
           <div className="tcat-item">Miro</div>
+          <div className="tcat-item">Frontend Fundamentals</div>
+          <div className="tcat-item">WCAG Accessibility</div>
+          <div className="tcat-item">Responsive Design</div>
+          <div className="tcat-item">Component Libraries</div>
         </div>
         <div className="tcat">
           <div className="tcat-label">AI &amp; Emerging</div>
           <div className="tcat-item">Figma AI</div>
           <div className="tcat-item">Google AI Studio</div>
-          <div className="tcat-item">Vibe Coding</div>
           <div className="tcat-item">ChatGPT / Claude</div>
+          <div className="tcat-item">AI-Assisted Workflows</div>
           <div className="tcat-item">AI UX Research</div>
-          <div className="tcat-item">Rapid Prototyping</div>
+          <div className="tcat-item">Vibe Coding</div>
         </div>
         <div className="tcat">
           <div className="tcat-label">Core Competencies</div>
-          <div className="tcat-item">Product Design</div>
+          <div className="tcat-item">Product &amp; UI/UX Design</div>
           <div className="tcat-item">Design Systems</div>
-          <div className="tcat-item">User Journey Mapping</div>
-          <div className="tcat-item">BRD Documentation</div>
-          <div className="tcat-item">UAT &amp; Usability Testing</div>
-          <div className="tcat-item">Stakeholder Comms</div>
+          <div className="tcat-item">Information Architecture</div>
+          <div className="tcat-item">Wireframe &amp; Prototyping</div>
+          <div className="tcat-item">User Research</div>
+          <div className="tcat-item">Usability Testing</div>
         </div>
         <div className="tcat">
           <div className="tcat-label">Workflow &amp; Delivery</div>
-          <div className="tcat-item">Jira</div>
-          <div className="tcat-item">ClickUp</div>
           <div className="tcat-item">Agile / Scrum</div>
-          <div className="tcat-item">Sprint Planning</div>
-          <div className="tcat-item">Dev Handoff</div>
-          <div className="tcat-item">Teams / Slack</div>
+          <div className="tcat-item">Developer Handoff</div>
+          <div className="tcat-item">Jira</div>
+          <div className="tcat-item">Slack &amp; Teams</div>
+          <div className="tcat-item">Design Documentation</div>
+          <div className="tcat-item">PRD &amp; BRD Analysis</div>
         </div>
       </div>
       <div style={{ height: "80px", background: "var(--bg)" }}></div>

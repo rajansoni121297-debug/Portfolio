@@ -97,7 +97,7 @@ export function Experience() {
           </div>
           <div className="exp-tsig">
             <div className="exp-tsig-idle">
-              <span className="exp-tsig-dur" id="exp-dur-01">1 yr 3 mos</span>
+              <span className="exp-tsig-dur" id="exp-dur-01">1 yr 5 mos</span>
               <span className="exp-tsig-unit">At MYCPE One</span>
             </div>
             <div className="exp-tsig-hover">
@@ -142,7 +142,7 @@ export function Experience() {
           </div>
           <div className="exp-tsig">
             <div className="exp-tsig-idle">
-              <span className="exp-tsig-dur">1 yr 3 mos</span>
+              <span className="exp-tsig-dur">1 yr 4 mos</span>
               <span className="exp-tsig-unit">At MediaNV</span>
             </div>
             <div className="exp-tsig-hover">
@@ -170,7 +170,7 @@ export function Experience() {
         {/* ── Job 03 ── */}
         <div className="exp-item reveal">
           <div>
-            <div className="exp-period">Jan 2020 — Jun 2023</div>
+            <div className="exp-period">Sep 2021 — Jun 2023</div>
             <div className="exp-idx">03</div>
           </div>
           <div>
@@ -187,7 +187,7 @@ export function Experience() {
           </div>
           <div className="exp-tsig">
             <div className="exp-tsig-idle">
-              <span className="exp-tsig-dur">3 yrs 5 mos</span>
+              <span className="exp-tsig-dur">1 yr 10 mos</span>
               <span className="exp-tsig-unit">At Rewaa Tech</span>
             </div>
             <div className="exp-tsig-hover">
@@ -206,6 +206,46 @@ export function Experience() {
                 <div className="exp-tsig-row">
                   <span className="exp-tsig-val"><em>16+</em> Domains Explored</span>
                   <span className="exp-tsig-lbl">Fintech · Health · E-com · Gov</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Job 04 ── */}
+        <div className="exp-item reveal">
+          <div>
+            <div className="exp-period">Jan 2020 — Aug 2021</div>
+            <div className="exp-idx">04</div>
+          </div>
+          <div>
+            <div className="exp-co">Freelance</div>
+            <div className="exp-role">UI/UX Designer</div>
+            <ul className="exp-ul">
+              <li>Designed conversion-focused web and mobile interfaces using a responsive, mobile-first approach.</li>
+              <li>Conducted user research, heuristic evaluations, and usability testing to drive iterative design improvements.</li>
+              <li>Created end-to-end UX artifacts including user flows, journey maps, wireframes, and interactive prototypes.</li>
+              <li>Delivered high-fidelity UI, design systems, and reusable component libraries.</li>
+              <li>Collaborated directly with clients and developers to ensure pixel-perfect implementation.</li>
+              <li>Utilized tools like Figma, Adobe XD, and Photoshop to accelerate the design process.</li>
+            </ul>
+          </div>
+          <div className="exp-tsig">
+            <div className="exp-tsig-idle">
+              <span className="exp-tsig-dur">1 yr 8 mos</span>
+              <span className="exp-tsig-unit">Freelance</span>
+            </div>
+            <div className="exp-tsig-hover">
+              <span className="exp-tsig-tag">Explore</span>
+              <div className="exp-tsig-metric">
+                <div className="exp-tsig-row">
+                  <span className="exp-tsig-val"><em>10+</em> Clients</span>
+                  <span className="exp-tsig-lbl">Global collaboration</span>
+                </div>
+                <div className="exp-tsig-divider"></div>
+                <div className="exp-tsig-row">
+                  <span className="exp-tsig-val">Startups</span>
+                  <span className="exp-tsig-lbl">Diverse industries</span>
                 </div>
               </div>
             </div>

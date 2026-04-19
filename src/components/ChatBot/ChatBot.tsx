@@ -20,12 +20,12 @@ const KNOWLEDGE: KnowledgeEntry[] = [
   {
     keywords: ["who", "about", "introduce", "tell me about", "yourself", "raj"],
     response:
-      "Raj Deep Dey is a UI/UX & Product Designer based in Ahmedabad, India with 5+ years of experience. He designs end-to-end digital products that balance user needs and business goals — backed by AI-assisted workflows and vibe coding. He's currently open to senior product design roles and freelance collaborations.",
+      "Raj Deep Dey is a UI/UX & Product Designer based in Ahmedabad, India with 6+ years of experience. He designs end-to-end digital products that balance user needs and business goals — backed by AI-assisted workflows and vibe coding. He's currently open to senior product design roles and freelance collaborations.",
   },
   {
     keywords: ["experience", "years", "how long", "career", "background"],
     response:
-      "Raj has 5+ years of professional design experience since June 2020:\n\n→ MYCPE One (Dec 2024 – Present) — Product Designer\n→ MediaNV (Jul 2023 – Oct 2024) — Product Designer\n→ Rewaa Tech Verge (Jan 2020 – Jun 2023) — UI/UX & Product Designer\n\nHe's worked across HRMS, Healthcare SaaS, Fintech, E-commerce, GovTech, and more.",
+      "Raj has 6+ years of professional design experience since January 2020:\n\n→ MYCPE One (Dec 2024 – Present) — Product Designer\n→ MediaNV (Jul 2023 – Oct 2024) — Product Designer\n→ Rewaa Tech Verge (Sep 2021 – Jun 2023) — UI/UX & Product Designer\n→ Freelance (Jan 2020 – Aug 2021) — UI/UX Designer\n\nHe's worked across HRMS, Healthcare SaaS, Fintech, E-commerce, GovTech, and more.",
   },
   {
     keywords: ["mycpe", "entigrity", "current", "present", "now"],
@@ -40,7 +40,12 @@ const KNOWLEDGE: KnowledgeEntry[] = [
   {
     keywords: ["rewaa", "tech verge", "first job", "started"],
     response:
-      "At Rewaa Tech Verge, Raj spent 3.5 years designing web and mobile experiences across PowerApps, BI dashboards, and CMS platforms. He designed 520+ screens, delivered 42+ projects across 16+ domains including Fintech, Healthcare, E-commerce, and GovTech.",
+      "At Rewaa Tech Verge, Raj spent around 2 years designing web and mobile experiences across PowerApps, BI dashboards, and CMS platforms. He designed 520+ screens, delivered 42+ projects across 16+ domains including Fintech, Healthcare, E-commerce, and GovTech.",
+  },
+  {
+    keywords: ["freelance", "freelancing", "independent"],
+    response:
+      "Raj started his career as a freelance UI/UX Designer from Jan 2020 to Aug 2021. He collaborated with various global clients, helping startups build their digital presence from the ground up, handling end-to-end user research to final UI handoff.",
   },
   {
     keywords: ["skill", "tool", "figma", "software", "stack", "tech"],
@@ -55,17 +60,17 @@ const KNOWLEDGE: KnowledgeEntry[] = [
   {
     keywords: ["hire", "available", "open", "freelance", "job", "work together", "opportunity"],
     response:
-      "Yes! Raj is currently open to work — both full-time senior product design roles and select freelance collaborations.\n\n📧 rajdeepdey.6359@gmail.com\n📱 +91 635 959 3154\n🔗 linkedin.com/in/6359raj\n\nHe typically responds within 24 hours.",
+      "Yes! Raj is currently open to work — both full-time senior product design roles and select freelance collaborations.\n\n📧 rajdeepuiux@gmail.com\n📱 +91 635 959 3154\n🔗 linkedin.com/in/6359raj\n\nHe typically responds within 24 hours.",
   },
   {
     keywords: ["contact", "email", "phone", "reach", "connect", "message"],
     response:
-      "Here's how to reach Raj:\n\n📧 Email: rajdeepdey.6359@gmail.com\n📱 Phone: +91 635 959 3154\n🌍 Location: Ahmedabad, Gujarat, India\n🕐 Timezone: IST (GMT+5:30)\n\nSocials:\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux\n→ Instagram: instagram.com/raj_uiux_\n→ Dribbble: dribbble.com/raj_uiux_",
+      "Here's how to reach Raj:\n\n📧 Email: rajdeepuiux@gmail.com\n📱 Phone: +91 635 959 3154\n🌍 Location: Ahmedabad, Gujarat, India\n🕐 Timezone: IST (GMT+5:30)\n\nSocials:\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux\n→ Instagram: instagram.com/raj_uiux_\n→ WhatsApp: wa.me/916359593154\n→ Dribbble: dribbble.com/raj_uiux_",
   },
   {
     keywords: ["mentor", "teach", "student", "coach", "guide", "training", "learn"],
     response:
-      "Beyond designing, Raj actively mentors aspiring UI/UX designers:\n\n→ 50+ students mentored\n→ 30+ placed in jobs at product companies\n→ 100+ sessions conducted\n\nHe offers portfolio reviews, career guidance, hands-on Figma workshops, and interview preparation. Several of his mentees now work at top companies across India.",
+      "Beyond designing, Raj actively mentors aspiring UI/UX designers:\n\n→ 30+ students mentored\n→ 20+ placed in jobs at product companies\n→ 16+ sessions conducted\n\nHe offers portfolio reviews, career guidance, hands-on Figma workshops (like his 'Pixel Perfect' seminar as a Guest Speaker), and interview preparation. Several of his mentees now work at top companies across India.",
   },
   {
     keywords: ["design system", "component", "library", "consistency"],
@@ -80,7 +85,7 @@ const KNOWLEDGE: KnowledgeEntry[] = [
   {
     keywords: ["education", "degree", "study", "college", "university", "qualification"],
     response:
-      "Raj's strength lies in his hands-on, real-world experience — 5+ years of shipping products across multiple industries. He complements this with continuous learning through certifications and staying current with design and AI trends.",
+      "Raj's strength lies in his hands-on, real-world experience — 6+ years of shipping products across multiple industries. He complements this with continuous learning through certifications and staying current with design and AI trends.",
   },
   {
     keywords: ["location", "city", "where", "based", "country", "india"],
@@ -100,12 +105,12 @@ const KNOWLEDGE: KnowledgeEntry[] = [
   {
     keywords: ["behance", "dribbble", "linkedin", "social", "link", "profile", "instagram", "insta"],
     response:
-      "Raj's profiles:\n\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux (46+ projects)\n→ Instagram: instagram.com/raj_uiux_\n→ Dribbble: dribbble.com/raj_uiux_",
+      "Raj's profiles:\n\n→ LinkedIn: linkedin.com/in/6359raj\n→ Behance: behance.net/raj_ui-ux (46+ projects)\n→ Instagram: instagram.com/raj_uiux_\n→ WhatsApp: wa.me/916359593154\n→ Dribbble: dribbble.com/raj_uiux_",
   },
   {
     keywords: ["salary", "rate", "charge", "cost", "price", "budget"],
     response:
-      "For discussions about rates and project budgets, it's best to connect with Raj directly. Each project is unique, and he tailors his approach based on scope and requirements.\n\n📧 rajdeepdey.6359@gmail.com\n📱 +91 635 959 3154",
+      "For discussions about rates and project budgets, it's best to connect with Raj directly. Each project is unique, and he tailors his approach based on scope and requirements.\n\n📧 rajdeepuiux@gmail.com\n📱 +91 635 959 3154",
   },
   {
     keywords: ["resume", "cv", "pdf", "download"],
@@ -135,7 +140,7 @@ function getResponse(query: string): string {
 
   // Thanks / bye
   if (/^(thanks|thank you|thx|bye|goodbye|see you|take care)/i.test(q)) {
-    return "You're welcome! 😊 Feel free to come back anytime. If you'd like to work with Raj, reach out at rajdeepdey.6359@gmail.com. Have a great day!";
+    return "You're welcome! 😊 Feel free to come back anytime. If you'd like to work with Raj, reach out at rajdeepuiux@gmail.com. Have a great day!";
   }
 
   // Score each knowledge entry by keyword matches

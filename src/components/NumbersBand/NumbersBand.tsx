@@ -106,7 +106,7 @@ class SlotDisplay {
 
 /* ── Experience calc ─────────────────────────────────────────── */
 function calcExperience() {
-  const start = new Date(2020, 5, 1); // June 2020
+  const start = new Date(2020, 0, 1); // January 2020
   const now = new Date();
   let y = now.getFullYear() - start.getFullYear();
   let m = now.getMonth() - start.getMonth();

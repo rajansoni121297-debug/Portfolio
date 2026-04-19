@@ -26,6 +26,14 @@ import { CardGlow } from "@/components/MicroAnimations/CardGlow";
 import { LetterReveal } from "@/components/MicroAnimations/LetterReveal";
 import { LineDrawReveal } from "@/components/MicroAnimations/LineDrawReveal";
 export default function Home() {
+  // Force scroll to top on reload/refresh
+  useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+  }, []);
+
   // Scroll reveal observer
   useEffect(() => {
     const obs = new IntersectionObserver(

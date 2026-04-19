@@ -15,6 +15,13 @@ export function Contact() {
     document.querySelectorAll(".cinfo").forEach((c) => setCursor(c as HTMLElement, ""));
   }, []);
 
+  // Listen for open-contact-modal event
+  useEffect(() => {
+    const handleOpen = () => setFormOpen(true);
+    window.addEventListener("open-contact-modal", handleOpen);
+    return () => window.removeEventListener("open-contact-modal", handleOpen);
+  }, []);
+
   // Close modal on Escape
   useEffect(() => {
     if (!formOpen) return;
@@ -82,7 +89,7 @@ export function Contact() {
             {/* Email */}
             <div className="cemail-wrap">
               <div className="cemail-label">Drop a line</div>
-              <a href="mailto:rajdeepdey.6359@gmail.com" className="cemail">rajdeepdey.6359@gmail.com</a>
+              <a href="mailto:rajdeepuiux@gmail.com" className="cemail">rajdeepuiux@gmail.com</a>
             </div>
 
             {/* CTAs */}
@@ -101,10 +108,7 @@ export function Contact() {
                 </div>
               </button>
 
-              <a href="#" className="cta-secondary" onClick={(e) => {
-                e.preventDefault();
-                if ((window as any).toast) (window as any).toast("// Design DNA PDF coming soon \u2726");
-              }}>
+              <a href="https://drive.google.com/file/d/11PItdVzggYCDBD5YgcG7Hco5zQNeBUQH/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="cta-secondary">
                 <div className="cta-secondary-inner">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
@@ -133,6 +137,7 @@ export function Contact() {
               <a href="https://www.behance.net/raj_ui-ux" className="soc-link" target="_blank">Behance</a>
               <a href="https://dribbble.com/raj_uiux_" className="soc-link" target="_blank">Dribbble</a>
               <a href="https://www.instagram.com/raj_uiux_/" className="soc-link" target="_blank">Instagram</a>
+              <a href="https://wa.me/916359593154?text=Hi%20Raj%2C%20I%20reviewed%20your%20portfolio%20and%20would%20love%20to%20discuss%20a%20potential%20project%2Fopportunity%20with%20you." className="soc-link" target="_blank" rel="noopener noreferrer">WhatsApp</a>
             </div>
           </div>
         </div>
@@ -226,7 +231,7 @@ export function Contact() {
               </button>
 
               {status === "error" && (
-                <p className="cform-error">Something went wrong. You can also email directly at rajdeepdey.6359@gmail.com</p>
+                <p className="cform-error">Something went wrong. You can also email directly at rajdeepuiux@gmail.com</p>
               )}
             </form>
           </div>

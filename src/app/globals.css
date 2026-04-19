@@ -443,13 +443,34 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:22px 60px;display:f
   transition:opacity .4s;
 }
 
-/* SCROLL HINT */
-.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeIn 1s 1.4s forwards;z-index:3}
-.scroll-hint-text{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
-.scroll-arrow{display:flex;flex-direction:column;align-items:center;gap:0;margin-top:2px}
-.scroll-line{width:1px;height:32px;background:linear-gradient(to bottom,var(--gold-line),transparent);animation:sa 2s ease-in-out infinite}
-.scroll-chevron{width:10px;height:10px;border-right:1px solid var(--gold-line);border-bottom:1px solid var(--gold-line);transform:rotate(45deg);margin-top:-4px;animation:sa 2s ease-in-out infinite .3s}
-@keyframes sa{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
+/* ══ PREMIUM SCROLL HINT ══ */
+.scroll-hint{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  opacity:0;animation:fadeIn 1s 1.4s forwards;z-index:3;
+}
+.scroll-hint-text{
+  font-family:var(--font-mono),'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);
+  white-space:nowrap;opacity:0.7;
+}
+.scroll-arrow{
+  width:1px;height:48px;
+  background:var(--border-mid);
+  position:relative;overflow:hidden;
+}
+.scroll-line{
+  width:100%;height:100%;
+  background:var(--gold);
+  position:absolute;top:0;left:0;
+  transform:translateY(-100%);
+  animation:scrollDrop 2s cubic-bezier(0.8, 0, 0.2, 1) infinite;
+}
+@keyframes scrollDrop{
+  0%{transform:translateY(-100%)}
+  40%{transform:translateY(0)}
+  80%,100%{transform:translateY(100%)}
+}
 
 /* ══ AVAIL BADGE HOVER MICROCOPY ══ */
 .avail-badge{position:relative}
@@ -782,6 +803,12 @@ section{padding:120px 60px}
 .about-text p strong{color:var(--text);font-weight:500}
 .about-quote{border-left:1px solid var(--gold-line);padding-left:28px;margin-bottom:40px}
 .about-quote p{font-family:var(--font-cormorant),'Cormorant Garamond',serif;font-size:22px;font-weight:300;font-style:italic;line-height:1.6;color:var(--text)}
+/* ── SKILL ORBS / TAGS ── */
+.orbs-hint{font-family:var(--font-mono),'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--gold);margin-bottom:24px;opacity:0.8;}
+.skill-orbs{display:flex;flex-wrap:wrap;gap:12px;}
+.skill-orb{font-family:var(--font-syne),'Syne',sans-serif;font-size:13px;padding:8px 18px;border-radius:24px;border:1px solid var(--border-mid);color:var(--text-dim);background:transparent;cursor:none;transition:all 0.3s cubic-bezier(0.23, 1, 0.32, 1);user-select:none;}
+.skill-orb:hover{border-color:var(--gold-line);color:var(--text-muted);transform:translateY(-2px);}
+.skill-orb.on{border-color:var(--gold);color:var(--gold);background:var(--gold-dim);box-shadow:0 0 16px rgba(200,153,58,0.15);transform:translateY(0);}
 /* ── RADIAL SKILL GAUGES ── */
 /* sgauges now inside .skills-band-gauges */
 .sgauge{display:flex;flex-direction:column;align-items:center;gap:10px;cursor:none}
@@ -2492,9 +2519,12 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:32px 60px
     text-align: left;
   }
   .exp-tsig-hover {
-    position: relative;
-    top: auto; right: auto;
-    text-align: left;
+    display: none !important;
+  }
+  .exp-item:hover .exp-tsig-idle {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
   .exp-tsig-dur { opacity: .25; }
   .exp-tsig-unit { text-align: left; }
@@ -2654,6 +2684,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:32px 60px
   nav { padding: 14px 16px; }
   .nav-logo { font-size: 18px; }
   .nav-links { gap: 10px; }
+  .nav-links li:not(:last-child) { display: none; }
   .nav-links a { font-size: 9px; letter-spacing: 1px; }
   .theme-toggle { width: 38px; height: 22px; }
   .theme-toggle-knob { width: 16px; height: 16px; }
@@ -2671,10 +2702,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:32px 60px
   .avail-text { font-size: 9px; }
 
   /* TTT */
-  .ttt-scene, .ttt-board-3d { width: 260px; height: 260px; }
-  .ttt-footer, .ttt-score { width: 260px; }
-  .ttt-header { flex-direction: column; align-items: flex-start; gap: 8px; }
-  .ttt-status { font-size: 10px; }
+  .hero-right { display: none !important; }
 
   /* Section padding */
   section { padding: 48px 16px; }

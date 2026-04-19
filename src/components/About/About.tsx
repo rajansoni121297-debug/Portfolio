@@ -1,6 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const quotes = [
+  "Every design decision should be traceable to a user need or a business metric \u2014 if it isn't, it's decoration.",
+  "Great UI isn't just about moving pixels; it's about removing friction. A seamless experience speaks louder than a striking aesthetic.",
+  "Users don't read interfaces, they scan them. A successful design respects their time and guides their intuition.",
+  "A design system is a living product. Without consistency, you scale chaos. With governance, you scale speed.",
+  "The best interfaces are invisible. When the user forgets they are using software and simply achieves their goal, the design has succeeded."
+];
 
 const orbs = [
   { name: "Product Design", on: true },
@@ -19,6 +27,13 @@ const orbs = [
 
 export function About() {
   const orbsRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const [currentQuote, setCurrentQuote] = useState(quotes[0]);
+
+  useEffect(() => {
+    setMounted(true);
+    setCurrentQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+  }, []);
 
   useEffect(() => {
     const container = orbsRef.current;
@@ -56,7 +71,7 @@ export function About() {
           </h2>
           <p>
             I&rsquo;m a UI/UX and Product Designer with{" "}
-            <strong>5 years 9 months</strong> of hands-on experience turning
+            <strong>6 years 3 months</strong> of hands-on experience turning
             ambiguous business goals into polished, measurable digital products.
             My career spans fintech dashboards, e-commerce platforms, SaaS tools,
             and AI-native interfaces &mdash; every project grounded in user
@@ -78,11 +93,11 @@ export function About() {
         </div>
         <div className="reveal rd2">
           <div className="about-quote">
-            <p>
-              &ldquo;Every design decision should be traceable to a user need or
-              a business metric &mdash; if it isn&rsquo;t, it&rsquo;s
-              decoration.&rdquo;
-            </p>
+            {mounted ? (
+              <p>&ldquo;{currentQuote}&rdquo;</p>
+            ) : (
+              <p>&ldquo;{quotes[0]}&rdquo;</p>
+            )}
           </div>
           <p className="orbs-hint">// tap to highlight your interests</p>
           <div className="skill-orbs" ref={orbsRef}>
