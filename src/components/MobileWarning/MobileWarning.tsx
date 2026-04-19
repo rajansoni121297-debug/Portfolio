@@ -8,18 +8,23 @@ export function MobileWarning() {
   useEffect(() => {
     // Only show if viewport is mobile width and hasn't been dismissed in this session
     const checkMobile = () => {
-      const isMobileSize = window.innerWidth <= 768;
-      const isMobileAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      // Catch mostly all mobile agents including Safari and Chrome mobile
+      const isMobileAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobi|mobi/i.test(navigator.userAgent);
+      
+      // Secondary check for narrow screens with touch capabilities (e.g. some iPads or unrecognized agents)
+      const isNarrowAndTouch = window.innerWidth <= 850 && 
+        (typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0));
+        
       const isDismissed = sessionStorage.getItem("mobile-warning-dismissed");
 
-      // Triggers if UserAgent matches mobile OR screen size is extremely narrow
-      if ((isMobileSize || isMobileAgent) && !isDismissed) {
+      // Triggers if UserAgent matches mobile OR screen size/touch match
+      if ((isMobileAgent || isNarrowAndTouch) && !isDismissed) {
         setIsVisible(true);
       }
     };
 
-    // Delay slightly so it doesn't conflict with Intro Overlay animations (appears after 4s)
-    const timer = setTimeout(checkMobile, 4000);
+    // Delay slightly to prevent jarring flashes, but much faster than before
+    const timer = setTimeout(checkMobile, 500);
     return () => clearTimeout(timer);
   }, []);
 
