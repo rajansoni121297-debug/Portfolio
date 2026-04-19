@@ -23,6 +23,7 @@ import { ChatBot } from "@/components/ChatBot/ChatBot";
 import { ScrollProgress } from "@/components/ScrollProgress/ScrollProgress";
 import { TextScramble } from "@/components/MicroAnimations/TextScramble";
 import { CardGlow } from "@/components/MicroAnimations/CardGlow";
+import { MobileWarning } from "@/components/MobileWarning/MobileWarning";
 import { LetterReveal } from "@/components/MicroAnimations/LetterReveal";
 import { LineDrawReveal } from "@/components/MicroAnimations/LineDrawReveal";
 export default function Home() {
@@ -95,6 +96,7 @@ export default function Home() {
       <ThemeProvider>
         <ScrollProgress />
         <IntroOverlay />
+        <MobileWarning />
         <CustomCursor />
         <Particles />
         <Nav />
